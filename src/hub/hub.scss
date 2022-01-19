@@ -1,0 +1,41 @@
+@import "node_modules/bootstrap/scss/bootstrap.scss";
+// @import "node_modules/bootstrap3/dist/css/bootstrap.css";
+// @import "~bootstrap/scss/bootstrap";
+// @import "~bootstrap-saas/bootstrap";
+// @import "../../node_modules/bootstrap3/dist/css/bootstrap.css";
+
+@import "node_modules/azure-devops-ui/Core/_platformCommon.scss";
+@import "node_modules/azure-devops-ui/Core/override.scss";
+
+// need to get this to work... fabric icons are not displaying... 
+//@import "node_modules/azure-devops-ui/Components/Icon/FabricIcons.scss";
+ 
+#root {
+    height: 100%;  
+    width: 100%;
+    display: flex;
+}
+
+.content {
+    height: 100%;
+    width: 100%;
+    object-fit: scale-down;
+}
+
+.form-group {
+    margin-bottom: 0.1rem;
+    // max-width: 500px uncomment to shrink whole form
+}
+
+.custom-select, .form-control{
+    font-size: 0.8rem; 
+}
+
+.form-group .pb-4, .py-4 {
+    padding-bottom: 0rem !important;
+    padding-top: 0rem !important;
+}
+
+.identity-picker-container{
+    max-width: 500px
+}

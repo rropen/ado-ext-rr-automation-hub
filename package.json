@@ -1,0 +1,50 @@
+{
+  "name": "rr-automation-hub-test",
+  "description": "Hub for simplifying and abstracting automation from pipelines",
+  "author": "Marc Robinson",
+  "license": "Rolls-Royce PLC 2022",
+  "scripts": {
+    "clean": "rimraf ./dist ./out",
+    "compile": "npm run clean && webpack --mode production",
+    "compile:dev": "npm run clean && webpack --mode development",
+    "package": "npm run compile && tfx extension create --manifest-globs vss-extension.json --overrides-file configs/release.json --output-path out",
+    "package:dev": "npm run compile:dev && tfx extension create --manifest-globs vss-extension.json --overrides-file configs/dev.json --output-path out",
+    "publish": "npm run compile && tfx extension publish --manifest-globs vss-extension.json --overrides-file configs/release.json --output-path out",
+    "publish:dev": "npm run compile:dev && tfx extension publish --manifest-globs vss-extension.json --overrides-file configs/dev.json --output-path out",
+    "start:dev": "webpack-dev-server --mode development"
+  },
+  "dependencies": {
+    "@byndit/azure-devops-extension-api": "^1.163.4",
+    "@rjsf/bootstrap-4": "^3.2.1",
+    "@rjsf/core": "^3.2.1",
+    "azure-devops-extension-sdk": "^2.0.11",
+    "azure-devops-ui": "^2.167.22",
+    "bootstrap": "4.6",
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1"
+  },
+  "devDependencies": {
+    "@types/react": "^16.8.1",
+    "@types/react-dom": "^16.8.1",
+    "@typescript-eslint/eslint-plugin": "^5.7.0",
+    "@typescript-eslint/parser": "^5.7.0",
+    "base64-inline-loader": "^2.0.1",
+    "copy-webpack-plugin": "^10.2.0",
+    "css-loader": "^6.5.1",
+    "eslint": "^8.4.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "file-loader": "^6.2.0",
+    "prettier": "^2.5.1",
+    "rimraf": "^3.0.2",
+    "sass-loader": "^12.4.0",
+    "style-loader": "^3.3.1",
+    "tfx-cli": "^0.9.3",
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.5.4",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.65.0",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.6.0"
+  }
+}

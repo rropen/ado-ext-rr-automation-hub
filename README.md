@@ -1,20 +1,23 @@
-# Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+# Summary
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+Extension adds a high level Hub page that:
+- Allows a user to select a a pipeline containing a JSON schema that defines variables
+- Renders a HTML Form using rjsf, that includes validation of fields
+- A number of Azure DevOps specific widgets are mapped (Identity pickers, current user, current project)
+- Once the form is filled out, the associated pipeline is run by passing the JSON variales to the pipeline variables 
+- The pipeline variables are presented as a flattened JSON key-value object, e.g. `"contact.address.street_name" : "main street"` 
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+## TODO
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+- 
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+## to run in dev server:
+
+`npm run start:dev` 
+
+- this will need the `dev` version of the extension to be published and installed in an ADO istance
+- can use localhost, but the ADO API calls will not work
+
+## to publish:
+
+`npm run publish:dev -- --token <token>`, token needs to have marketplace publish perms in ADO for all organisations 

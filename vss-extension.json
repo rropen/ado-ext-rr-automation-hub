@@ -1,0 +1,58 @@
+{
+  "manifestVersion": 1,
+  "version": "1.0.3",
+  "name": "Automation Hub",
+  "id": "rr-automation-hub-test",
+  "description": "Hub for simplifying and abstracting automation from pipelines",
+  "publisher": "MarcRobinsonTest",
+  "public": false,
+  "demands": ["api-version/3.0"],
+  "categories": ["Azure Repos"],
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "content": {
+    "details": {
+      "path": "README.md"
+    }
+  },
+  "icons": {
+    "default": "img/RR-Monogram-RGB-Blue-sq2.png"
+  },
+  "files": [
+    {
+      "path": "dist",
+      "addressable": true
+    },
+    {
+      "path": "img",
+      "addressable": true
+    }
+  ],
+  "scopes": ["vso.code_full", "vso.release_manage", "vso.build_execute", "vso.graph_manage","vso.identity_manage"],
+  "contributions": [
+    {
+      "id": "automation-hub-group",
+      "type": "ms.vss-web.hub-group",
+      "description": "Automation hub group",
+      "targets": ["ms.vss-web.project-hub-groups-collection"],
+      "properties": {
+        "name": "Automation Hub",
+        "icon": {
+          "dark": "img/RR-Monogram-RGB-Blue-sq2-reverse.png",
+          "light": "img/RR-Monogram-RGB-Blue-sq2.png"
+        }
+      }
+    },
+    {
+      "id": "default-hub",
+      "type": "ms.vss-web.hub",
+      "targets": [".automation-hub-group"],
+      "properties": {
+        "uri": "dist/hub/hub.html"
+      }
+    }
+  ]
+}
