@@ -18,23 +18,13 @@ import { Button } from "azure-devops-ui/Button";
 
 export interface PipelineSelectProps {
     onSelect: (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>)  => any
-    pipelineIDNames: IListBoxItem[]
+    pipelineIDNames: ObservableValue<ArrayItemProvider<IListBoxItem>>
 }
 
 
-
 export class PipelineSelect extends React.Component<PipelineSelectProps> {
-
-    // private buildDefsIDName: IListBoxItem[] = [];
-
-    // we need an item provider that can conform to the IListboxItem (we'll only use ID and text)
-    private itemProvider:ObservableValue<ArrayItemProvider<IListBoxItem>>
-
     constructor(props: PipelineSelectProps) {
         super(props);
-        this.itemProvider = new ObservableValue<ArrayItemProvider<IListBoxItem>>(
-            new ArrayItemProvider(props.pipelineIDNames)
-        );
     }  
     
     componentDidMount() {
@@ -46,7 +36,7 @@ export class PipelineSelect extends React.Component<PipelineSelectProps> {
                     <HeaderTitleArea>
                         <HeaderTitleRow>
                             <HeaderTitle ariaLevel={3} className="text-ellipsis" titleSize={TitleSize.Small}>
-                                <Observer itemProvider = {this.itemProvider}>
+                                <Observer itemProvider = {this.props.pipelineIDNames}>
                                     
                                 {(observableProps: {
                                         /** itemProvider type declaration */

@@ -11,15 +11,22 @@ import * as SDK from "azure-devops-extension-sdk";
 import { Dialog } from "azure-devops-ui/Dialog";
 import { Page } from "azure-devops-ui/Page";  
 import { IListBoxItem } from "azure-devops-ui/ListBox";
+import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
+import { ObservableValue } from "azure-devops-ui/Core/Observable";
 
 //LOCAL
 import {PipelineSelect} from "./pipelineSelect"
+import * as ADOAPI from "./ado-api"
 
 class Classifier extends React.Component<{}, {}> {
 
-    private buildDefsIDName: IListBoxItem[] = [];
+    // private buildDefsIDName: ArrayItemProvider<IListBoxItem>;
+    private buildDefsItemProvider = new ObservableValue<ArrayItemProvider<IListBoxItem>>(
+        new ArrayItemProvider([])
+    )
 
     constructor(props: {}) {
+
         super(props);
     }  
     
@@ -27,6 +34,15 @@ class Classifier extends React.Component<{}, {}> {
         SDK.init(
             {loaded: false}
         ).then(async() => {
+
+            ADOAPI.getBuildDefinitions().then( (value) => { 
+                //transform value to an object that confirms to IListboxItem, so can pass it back to the dropdown
+                var buildDefsIDName = value!.map((a) => ({id: a.id.toString(), text: a.name}))
+                this.buildDefsItemProvider.value = new ArrayItemProvider(
+                    buildDefsIDName
+                );
+            }) 
+
             console.log("SDK init finished")
             SDK.notifyLoadSucceeded();
         })
@@ -35,32 +51,24 @@ class Classifier extends React.Component<{}, {}> {
     render(): JSX.Element { 
         return (
             <Page className="flex-grow">
-            {/* <div>
-            <div>some text233</div>
-            <Dialog titleProps={{ text: "Classifier" }} onDismiss={()=>{}}>
-            <div>some text</div>
-            </Dialog>
-            </div> */}
-            
                 <PipelineSelect 
                 onSelect={this.onSelectBuildDefinition} 
-                pipelineIDNames={this.buildDefsIDName} 
+                pipelineIDNames={this.buildDefsItemProvider} 
                 />
             </Page>
         )
     }
 
     private onSelectBuildDefinition = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>) => {
-        // this.selectedBuild! = item;
         console.log(`Selected Build ID: ${item.id} Text: ${item.text}`)
         
-        // this.adoApi.getSchemaFilesFromBuild(parseInt(this.selectedBuild!.id)).then((value:[string,string] | undefined) =>{
-        //     this.schema = JSON.parse(value![0])
-        //     this.uiSchema = JSON.parse(value![1])
+        ADOAPI.getSchemaFilesFromBuild(parseInt(item.id)).then((value:[string,string] | undefined) =>{
+            var schema = JSON.parse(value![0])
+            var uiSchema = JSON.parse(value![1])
         //     this.loadForm(this.schema!, this.uiSchema!);
-        //     console.log(`schema ${JSON.stringify(this.schema!)}`)
-        //     console.log(`UIschema ${JSON.stringify(this.uiSchema!)}`)
-        // })
+            console.log(`schema ${JSON.stringify(schema)}`)
+            console.log(`UIschema ${JSON.stringify(uiSchema)}`)
+        })
         // this.setState({submitted:false})
     };
 }
