@@ -13,18 +13,27 @@ import {
     HeaderTitleRow,
     TitleSize
 } from "azure-devops-ui/Header";
+import { HeaderCommandBar } from "azure-devops-ui/HeaderCommandBar";
 import { TextField } from "azure-devops-ui/TextField";
 import { Button } from "azure-devops-ui/Button";
+import { getCommandBar } from "./header-data";
+
 
 export interface PipelineSelectProps {
     onSelect: (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>)  => any
+    showSettings: ()  => any
     pipelineIDNames: ObservableValue<ArrayItemProvider<IListBoxItem>>
 }
 
+interface PipelineSelectPropsState {
+    showSettingsPanel: boolean;
+    projectName: string;
+}
 
-export class PipelineSelect extends React.Component<PipelineSelectProps> {
+export class PipelineSelect extends React.Component<PipelineSelectProps,PipelineSelectPropsState> {
     constructor(props: PipelineSelectProps) {
         super(props);
+        this.state = { showSettingsPanel: false, projectName: "MarcTest" };
     }  
     
     componentDidMount() {
@@ -32,6 +41,7 @@ export class PipelineSelect extends React.Component<PipelineSelectProps> {
     
     render(): JSX.Element { 
         return (
+            <div>
             <CustomHeader className="bolt-header-with-commandbar">
                     <HeaderTitleArea>
                         <HeaderTitleRow>
@@ -54,7 +64,16 @@ export class PipelineSelect extends React.Component<PipelineSelectProps> {
                             </HeaderTitle>
                         </HeaderTitleRow>
                     </HeaderTitleArea>
+                    <HeaderCommandBar items={getCommandBar( this.props.showSettings)}
+                        // () => {
+                        // this.setState({showSettingsPanel:true})
+                        // console.log("setting state to true")
+                        // })} 
+                        />
                 </CustomHeader>
+
+                </div>
+                
         )
     }
 }
