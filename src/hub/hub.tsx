@@ -40,6 +40,10 @@ interface IHubStateProps {
     projectNames:string[]
 }
 
+/**
+ * Main Hub component. 
+ * 
+ */
 class Hub extends React.Component<{}, IHubStateProps> {
 
     // observable that monitors changes to the associated ArrayItemProvider
@@ -47,8 +51,6 @@ class Hub extends React.Component<{}, IHubStateProps> {
     private buildDefsItemProvider = new ObservableValue<ArrayItemProvider<IListBoxItem>>(
         new ArrayItemProvider([])
     )
-
-    // private projectNames:string[] = []
 
     constructor(props: {}) {
         super(props);
@@ -82,9 +84,13 @@ class Hub extends React.Component<{}, IHubStateProps> {
             }
             )    
             
-            var tp = await ADOAPI.getProjects();
-            this.setState({projectNames : Array.from(tp!, x => x.name!)});
+            ADOAPI.getProjects().then((value)=>{
+                this.setState({projectNames : Array.from(value!, x => x.name!)});
+            })
 
+            // await here rather than then
+            // var tp = await ADOAPI.getProjects();
+            // this.setState({projectNames : Array.from(tp!, x => x.name!)});
             console.log("SDK init finished")
             SDK.notifyLoadSucceeded();
         })
@@ -134,10 +140,8 @@ class Hub extends React.Component<{}, IHubStateProps> {
                     { this.state.showSettingsPanel ?             
                         <SettingsPanel settings={this.state.settings} projectNames={this.state.projectNames }
                         onSave={(newSettings) => {
-
                             this.setState({settings:newSettings, showPipelineForm:false},this.loadBuildDefinitions)
-                        }
-                            
+                            }  
                         } 
                         onDismiss={()=>this.setState({showSettingsPanel:false})}
                         />  
@@ -183,7 +187,6 @@ class Hub extends React.Component<{}, IHubStateProps> {
         });
         
     }).catch( (e:any) => {
-
         this.setState({submitted:false, errorMsg:e.message, showError:true})
         console.log("Error ",  JSON.stringify(e.message));
         console.log("State ",  JSON.stringify(this.state));

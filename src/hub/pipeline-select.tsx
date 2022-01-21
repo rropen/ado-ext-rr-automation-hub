@@ -16,7 +16,10 @@ import {
 import { HeaderCommandBar } from "azure-devops-ui/HeaderCommandBar";
 import { TextField } from "azure-devops-ui/TextField";
 import { Button } from "azure-devops-ui/Button";
+import { Panel } from "azure-devops-ui/Panel";
+
 import { getCommandBar } from "./header-data";
+import { HelpContent } from "./help-panel";
 
 
 export interface PipelineSelectProps {
@@ -26,14 +29,13 @@ export interface PipelineSelectProps {
 }
 
 interface PipelineSelectPropsState {
-    showSettingsPanel: boolean;
-    projectName: string;
+    showHelpPanel: boolean;
 }
 
 export class PipelineSelect extends React.Component<PipelineSelectProps,PipelineSelectPropsState> {
     constructor(props: PipelineSelectProps) {
         super(props);
-        this.state = { showSettingsPanel: false, projectName: "MarcTest" };
+        this.state = { showHelpPanel: false };
     }  
     
     componentDidMount() {
@@ -42,6 +44,15 @@ export class PipelineSelect extends React.Component<PipelineSelectProps,Pipeline
     render(): JSX.Element { 
         return (
             <div>
+                {this.state.showHelpPanel && (
+                <Panel
+                    onDismiss={() =>{ this.setState({showHelpPanel:false})}}
+                    titleProps={{ text: "Help" }}
+                >
+                <HelpContent />
+                </Panel>
+            )}
+
             <CustomHeader className="bolt-header-with-commandbar">
                     <HeaderTitleArea>
                         <HeaderTitleRow>
@@ -64,14 +75,8 @@ export class PipelineSelect extends React.Component<PipelineSelectProps,Pipeline
                             </HeaderTitle>
                         </HeaderTitleRow>
                     </HeaderTitleArea>
-                    <HeaderCommandBar items={getCommandBar( this.props.showSettings)}
-                        // () => {
-                        // this.setState({showSettingsPanel:true})
-                        // console.log("setting state to true")
-                        // })} 
-                        />
+                    <HeaderCommandBar items={getCommandBar( this.props.showSettings, () => {this.setState({showHelpPanel:true})} )}/>
                 </CustomHeader>
-
                 </div>
                 
         )

@@ -34,10 +34,6 @@ export class SettingsPanel extends React.Component<IPanelExampleProps, IPanelExa
         this.state = { expanded: true, settings: this.props.settings };
         this.dismiss = this.dismiss.bind(this);
         // this.projectNameObservable.value = this.props.settings.projectName
-
-        
-        
-
     }
 
     dismiss(){
