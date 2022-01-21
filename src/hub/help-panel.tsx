@@ -16,6 +16,8 @@ import {
 
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 
+import * as SimpleSchema from "./demo-schema"
+
 // export interface ITableItem extends ISimpleTableCell {
 //     name: string;
 //     description: string;
@@ -80,36 +82,8 @@ export class HelpContent extends React.Component<any,any> {
     }
 }`
         this.schemaCodeHelp2 = `{"a.b.c": "hello"}`
-        this.schemaCodeUIHelp1 = `{
-    "title": "My Pipeline Variables",
-    "type": "object",
-    "properties": {
-        "users": {
-            "type": "object",
-            "properties": {
-                "user_one": {
-                    "type": "string",
-                }
-                "user_two": {
-                    "type": "string",
-                }
-            }
-        }
-    }
-}`
-
-    
-        this.schemaCodeUIHelp2 = `{
-    "users": {
-        "user_one": {
-                "ui:widget": "currentIdentityWidget"
-                }
-        "user_two": {
-                "ui:widget": "identityWidget"
-                }
-        }
-}`
-    
+        this.schemaCodeUIHelp1 = SimpleSchema.simpleSchema
+        this.schemaCodeUIHelp2 = SimpleSchema.simpleUiSchema
         }
 
     render(): JSX.Element {
@@ -199,10 +173,10 @@ export class HelpContent extends React.Component<any,any> {
 
                 <p> The <code>ui:widget</code> element can be set to: </p> 
 
-                <p><code>identityWidget</code> - An empty single Azure DevOps identity picker (user or group)</p>
-                <p><code>currentIdentityWidget</code> - A single Azure DevOps identity picker (user or group) populated with the current user</p>
-                <p><code>identitiesWidget</code> - A multiple Azure DevOps identity picker (users or groups) </p>
-                <p><code>currentIdentitiesWidget</code> - A multiple Azure DevOps identity picker (users or groups) populated with the current user</p>
+                <p><code>identityWidget</code> - An empty single Azure DevOps identity picker (user or group). The Display Name of the identity is used to populate the form.</p>
+                <p><code>currentIdentityWidget</code> - A single Azure DevOps identity picker (user or group) populated with the current user. A CSV of the Display Names of the identities are used to populate the form</p>
+                <p><code>identitiesWidget</code> - A multiple Azure DevOps identity picker (users or groups). The Display Name of the identity is used to populate the form. </p>
+                <p><code>currentIdentitiesWidget</code> - A multiple Azure DevOps identity picker (users or groups) populated with the current user. A CSV of the Display Names of the identities are used to populate the form</p>
                 <p><code>currentUserName</code> - A text entry populated with the current users display name</p>
                 <p><code>currentUserEmail</code> - A text entry populated with the current users email</p>
                 <p><code>currentProject</code> - A text entry populated with the current project</p>

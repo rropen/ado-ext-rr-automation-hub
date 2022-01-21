@@ -9,18 +9,26 @@
 
 `npm run publish:dev -- --token <token>`, token needs to have marketplace publish perms in ADO for all organisations 
 
+## TODO
+
+- Wrap promise errors in ADO error prompt? 
+- Extension default settings stored somewhere? and settable by admins only
+- Use pipeline folders to define automation, add folder to settings 
 
 # Design 
 
 ## React
 
 Hub
-|  | Dropdown | |
-|  | FormPage | |   
-|               |
-|               |
-| SubmitDialog  |
-| ErrorDialog   |
+|  | Dropdown |       |
+|  |  | HelpPanel     |  
+|  | FormPage |       |   
+|                     |
+|                     |
+| SubmitDialog        |
+| ErrorDialog         |
+| SettingsPanel       |
+
 
 
 ## Non-React

@@ -56,7 +56,7 @@ export class ErrorDialog extends React.Component<ErrorDialogProps> {
                                     
                                     
                                     <div className="col-sm-10">    
-                                    Automation pipeline failed. 
+                                    
                                          <div className="flex-grow"> 
                                             {this.props.errorMsg}
                                              </div>   
