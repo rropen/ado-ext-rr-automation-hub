@@ -1,6 +1,4 @@
-# Summary 
-
-## Problem Statement
+# Problem Statement
 
 ### Specific 
 
@@ -12,6 +10,17 @@
 1. Running of ADO pipelines can be clunky when setting multiple, complex variables 
 1. Common pipelines for general consumption across ADO is difficult (hard to find and execute for beginners)
 
+# Solution 
+
+Create an extension in DevOps that incurs minimal overhead and leverages current pipeline/git features. 
+
+Overview:
+
+- A `JSON` Schema is stored alongside the `YAML` pipeline file
+- The schema represents the variables required by the pipeline
+- An extensions to DevOps, reads this schema and auto-generates a User Interface for the user enter variables 
+- On submit, the extension validates the variables and runs the associated pipeline, passing the variables set 
+- A user can monitor the progress using the usual pipeline run UI
 
 
 ## Architecture
