@@ -50,9 +50,14 @@ Overview:
 ## TODO
 
 
+- Spinny wheels for async
 - Extension default settings stored somewhere? and settable by admins only
 - Use pipeline folders to define automation, add folder to settings 
 - Wrap promise errors in ADO error prompt? 
+- Copy vars from previous run 
+- No Personal Data (make this explicit)
+
+
 
 # Design 
 
