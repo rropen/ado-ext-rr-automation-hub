@@ -1,3 +1,18 @@
+# Summary 
+
+
+## Architecture
+
+![Azure DevOps Architecture](arch.png)
+
+
+
+
+
+--- 
+
+# Development Docs 
+
 ## to run in dev server:
 
 `npm run start:dev` 
@@ -11,9 +26,10 @@
 
 ## TODO
 
-- Wrap promise errors in ADO error prompt? 
+
 - Extension default settings stored somewhere? and settable by admins only
 - Use pipeline folders to define automation, add folder to settings 
+- Wrap promise errors in ADO error prompt? 
 
 # Design 
 
@@ -21,14 +37,13 @@
 
 Hub
 |  | Dropdown |       |
-|  |  | HelpPanel     |  
+|  |  |   HelpPanel   |   
 |  | FormPage |       |   
 |                     |
 |                     |
 | SubmitDialog        |
 | ErrorDialog         |
 | SettingsPanel       |
-
 
 
 ## Non-React

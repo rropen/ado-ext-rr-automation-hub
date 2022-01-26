@@ -217,9 +217,19 @@ export const getSchemaFilesFromBuild = async (buildDefID: number, branch:string,
             versionDescriptor:version
         }
 
+        var UIschemaString:string = "{}"
+        try{
         var content:ArrayBuffer = await gitClient.getItemContent(tprops.repositoryId,tprops.path,project,"",VersionControlRecursionType.None,false,false,false,tprops.versionDescriptor)
-        var UIschemaString:string = new TextDecoder().decode(content)
+        UIschemaString = new TextDecoder().decode(content)
         console.log(`content: ${JSON.stringify(UIschemaString)}`)  
+        } catch ( e ) {
+            if (e instanceof Error){ 
+                if (!e.message.includes("could not be found in the repository"))
+                {
+                    throw e
+                }
+            }
+        }
 
         return [schemaString,UIschemaString]      
 

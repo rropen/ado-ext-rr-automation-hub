@@ -15,7 +15,6 @@ export interface SubmitDialogProps {
 
 export class SubmitDialog extends React.Component<SubmitDialogProps> {
     private isDialogOpen = new ObservableValue<boolean>(true);
-    //private buildURL:string = "https://dev.azure.com/RR-IT4IT-DEV/MarcTest/_build/results?buildId=5&view=results"
 
     constructor(props: SubmitDialogProps) {
         super(props);
