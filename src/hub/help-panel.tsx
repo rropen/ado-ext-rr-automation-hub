@@ -182,6 +182,21 @@ export class HelpContent extends React.Component<any,any> {
                 <p><code>currentProject</code> - A text entry populated with the current project</p>
 
 
+                <h6> Secret Variables  </h6>
+
+                <p> Secret variables can be defined such that once submitted, they will not appear in any pipeline output or API calls. To do this, use the <code>"ui:secret": true</code> tag in the UI Schema file: </p>
+                
+                
+                <CodeBlock
+                text={SimpleSchema.simpleUiSchemaSecret}
+                language="json"
+                showLineNumbers={false}
+                startingLineNumber={1}
+                theme={this.theme}
+                />
+
+                <p>In the above, User Two will be passed a secret variable to the pipeline.</p>
+
             </div>
 
             <div>

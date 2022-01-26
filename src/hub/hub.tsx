@@ -172,6 +172,26 @@ class Hub extends React.Component<{}, IHubStateProps> {
         }).catch( (e:any) => {this.setState({errorMsg:e.message, showError:true, showPipelineForm:false})});          
     };
 
+    private getSecrets() : {[key:string]:boolean} {
+        var flatSchema = Flat.flatten(this.state.uiSchema,"")
+        console.log("flatSchema: ",  JSON.stringify(flatSchema));
+        const entries = Object.entries(flatSchema);
+
+        var secrets:{[key:string]:boolean} = {}
+
+        for (let i = 0; i < entries.length; i += 1) {
+            const [objectKey, objectValue]  = entries[i];
+            if(objectKey.includes("ui:secret")){
+                let newKey = objectKey.replace(".ui:secret","")
+                let nval:any = entries[i][1]
+                secrets[newKey] = nval
+            }
+        }
+
+        return secrets
+    }
+
+
     private submit(props:any){
         console.log("Data submitted: ",  JSON.stringify(props.formData));
         console.log("State: ",  JSON.stringify(this.state));
@@ -179,8 +199,10 @@ class Hub extends React.Component<{}, IHubStateProps> {
 
         //formData.formData = {}
         var params = Flat.flatten(props.formData,"");
+
+        var secrets = this.getSecrets()
         
-        ADOAPI.queueBuild(this.state.selectedBuildID!,params,this.state.settings.projectName).then( (url:string | undefined) => {
+        ADOAPI.queueBuild(this.state.selectedBuildID!,params,secrets,this.state.settings.projectName).then( (url:string | undefined) => {
             // throw({message:"ERRROR!"})
             this.setState({submitted:true, 
                 submittedBuildUrl:url

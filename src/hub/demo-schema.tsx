@@ -27,3 +27,15 @@ export const simpleUiSchema = `{
         }
 }`
 
+export const simpleUiSchemaSecret:string = `{
+    "users": {
+        "user_one": {
+                "ui:widget": "currentIdentityWidget"
+                },
+        "user_two": {
+                "ui:widget": "identityWidget",
+                "ui:secret": true
+                }
+        }
+}`
+

@@ -46,18 +46,22 @@ import * as SDK from "azure-devops-extension-sdk";
 /**
  * Queue pipeline (ADO latest API)
  * */
-export const queueBuild = async (buildDefID:number, parameters: {[key:string]:string}, project:string): Promise<string | undefined> =>
+export const queueBuild = async (buildDefID:number, parameters: {[key:string]:string}, secrets: {[key:string]:boolean}, project:string): Promise<string | undefined> =>
 {
 
     try{
         var _params:any ={}
+        console.log(`secrets: ${JSON.stringify(secrets)}`)  
         for (const [key, val] of Object.entries(parameters)) {
             _params[key] = {
                 isSecret: false,
                 value: val
             }
+            if (Object.keys(secrets).includes(key) && secrets[key] === true){
+                _params[key].isSecret = true
+            }
           }
-
+        console.log(`_params: ${JSON.stringify(_params)}`)  
         var runParms:RunPipelineParameters = 
         {
             variables: _params
@@ -80,10 +84,11 @@ export const queueBuild = async (buildDefID:number, parameters: {[key:string]:st
  * @param {string} c key to pass per recursion
  * @returns {Promise<BuildDefinitionReference[] | undefined>}
  */
-export const getBuildDefinitions = async (project:string) : Promise<BuildDefinitionReference[] | undefined> =>
+export const getBuildDefinitions = async (project:string, folder?:string|undefined) : Promise<BuildDefinitionReference[] | undefined> =>
 {
     try{
-        var buildDefs:BuildDefinitionReference[] = await getClient(BuildRestClient).getDefinitions(project)
+        var buildDefs:BuildDefinitionReference[] = await getClient(BuildRestClient).getDefinitions(project,undefined,undefined,undefined,
+            undefined,undefined,undefined,undefined,undefined,folder)
         console.log(`Builds: ${JSON.stringify(buildDefs)}`)  
         return buildDefs      
     } catch (e) {

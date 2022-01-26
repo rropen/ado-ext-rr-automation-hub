@@ -51,6 +51,7 @@ Overview:
 
 
 - Spinny wheels for async
+- Secret variables - for update user info 
 - Extension default settings stored somewhere? and settable by admins only
 - Use pipeline folders to define automation, add folder to settings 
 - Wrap promise errors in ADO error prompt? 
