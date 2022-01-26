@@ -9,8 +9,9 @@ import { Status, Statuses, StatusSize, StatusType } from "azure-devops-ui/Status
 export interface SubmitDialogProps {
     isDialogOpen: boolean,
     buildUrl:string
-    // pipelinState: StatusType
+    onClose: () => any
 }
+
 
 
 export class SubmitDialog extends React.Component<SubmitDialogProps> {
@@ -24,6 +25,7 @@ export class SubmitDialog extends React.Component<SubmitDialogProps> {
     public render() {
         const onDismiss = () => {
             this.isDialogOpen.value = false;
+            this.props.onClose();
         };
         return (
             <div>

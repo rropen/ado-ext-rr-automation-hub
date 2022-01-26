@@ -130,7 +130,7 @@ class Hub extends React.Component<{}, IHubStateProps> {
                     : null }
 
                     { this.state.submitted ? 
-                        <SubmitDialog isDialogOpen={true} buildUrl={this.state.submittedBuildUrl!}></SubmitDialog>
+                        <SubmitDialog isDialogOpen={true} onClose={()=>{this.setState({submitted:false})}} buildUrl={this.state.submittedBuildUrl!}></SubmitDialog>
                     : null } 
 
                     { this.state.showError ? 
