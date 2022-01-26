@@ -1,5 +1,18 @@
 # Summary 
 
+## Problem Statement
+
+### Specific 
+
+1. Wider uptake of ADO requires a level of standardisation, simplification and governance 
+   - Examples: Creating repositories in a standard way, creating projects/teams, manageing security groups
+
+### General
+
+1. Running of ADO pipelines can be clunky when setting multiple, complex variables 
+1. Common pipelines for general consumption across ADO is difficult (hard to find and execute for beginners)
+
+
 
 ## Architecture
 
