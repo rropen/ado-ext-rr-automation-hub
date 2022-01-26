@@ -4,6 +4,7 @@
 
 1. Wider uptake of ADO requires a level of standardisation, simplification and governance 
    - Examples: Creating repositories in a standard way, creating projects/teams, manageing security groups
+1. Wider automation of Azure resources could/should be carried out via Infrastructure-as-Code (IaC) executed using pipelines. These pipelines can be tricky to run and hard to access 
 
 ### General
 
