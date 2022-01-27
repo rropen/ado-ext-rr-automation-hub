@@ -24,6 +24,10 @@ import {
     CoreRestClient
 } from "@byndit/azure-devops-extension-api/Core";
 
+// import {
+//     CoreRestClient
+// } from "@byndit/azure-devops-extension-api/Common";
+
 import {
     RunPipelineParameters,
     Run,
@@ -40,6 +44,16 @@ import {
 
 import * as SDK from "azure-devops-extension-sdk";
 
+
+export const  getAuthorizationHeader = async () => {
+    try{
+    var token = await SDK.getAccessToken()
+        return token ? ("Bearer " + token) : ""; 
+    } catch (e) {
+        console.log(JSON.stringify(e));
+        throw(e)
+    }
+}
 
 // may want to be a class if the getClient takes a while and does not cache anywhere... 
 
@@ -191,6 +205,12 @@ export const getSchemaFilesFromBuild = async (buildDefID: number, branch:string,
                                               uiSchemaFileName:string ): Promise<[string,string] | undefined> =>
 { 
     try{
+
+        var cc = getClient(CoreRestClient)
+        // var ss = cc.
+        
+
+
         var build:BuildDefinition
         build = await getClient(BuildRestClient).getDefinition(project,buildDefID)
         console.log(`repository for build: ${JSON.stringify(buildDefID)} ${JSON.stringify(build.repository)}`)  

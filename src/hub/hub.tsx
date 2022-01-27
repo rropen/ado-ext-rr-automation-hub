@@ -5,7 +5,7 @@ import * as ReactDOM from "react-dom";
 //SDK
 import * as SDK from "azure-devops-extension-sdk";
 import { JSONSchema7} from 'json-schema';
-
+import $RefParser from "@apidevtools/json-schema-ref-parser";
 
 //UI
 import { Dialog } from "azure-devops-ui/Dialog";
@@ -13,9 +13,10 @@ import { Page } from "azure-devops-ui/Page";
 import { IListBoxItem } from "azure-devops-ui/ListBox";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
+import { Spinner, SpinnerSize } from "azure-devops-ui/Spinner";
 
 //LOCAL
-import {PipelineSelect} from "./pipeline-select"
+import {PipelineSelect, loadingItem} from "./pipeline-select"
 import * as ADOAPI from "./ado-api"
 import {ParametersForm} from "./parameters-form"
 import {SubmitDialog} from "./submit-dialog"
@@ -37,7 +38,8 @@ interface IHubStateProps {
     errorMsg: string | undefined
     showSettingsPanel:boolean
     settings: ISettings
-    projectNames:string[]
+    projectNames:string[],
+    loading: boolean
 }
 
 /**
@@ -64,7 +66,8 @@ class Hub extends React.Component<{}, IHubStateProps> {
                 uiSchemaFileName:"azure-pipelines-variable-schema-ui.json",
                 branchName: "main"
             },
-            projectNames:[]
+            projectNames:[],
+            loading: false
         }
         this.submit = this.submit.bind(this);
     }  
@@ -101,7 +104,9 @@ class Hub extends React.Component<{}, IHubStateProps> {
     }
 
     loadBuildDefinitions(){
-        this.buildDefsItemProvider.value = new ArrayItemProvider([]);
+        this.buildDefsItemProvider.value = new ArrayItemProvider(
+            [loadingItem]
+        );
 
         ADOAPI.getBuildDefinitions(this.state.settings.projectName).then( (value) => { 
             //transform value to an object that confirms to IListboxItem, so can pass it back to the dropdown
@@ -118,6 +123,8 @@ class Hub extends React.Component<{}, IHubStateProps> {
     render(): JSX.Element { 
         return (
             <Page className="flex-grow">
+
+                
                 <PipelineSelect 
                 onSelect={this.onSelectBuildDefinition} 
                 pipelineIDNames={this.buildDefsItemProvider}
@@ -125,10 +132,17 @@ class Hub extends React.Component<{}, IHubStateProps> {
                 />
                 <div className="page-content page-content-top">
                     
-                    { this.state.showPipelineForm ?  
-                        <ParametersForm onSubmit={this.submit} schema={this.state.schema} uiSchema={this.state.uiSchema} formData={this.state.formData} />
+                    { this.state.loading ?  
+                    <Dialog titleProps={{text:""}} onDismiss={()=>{}}>
+                     <Spinner size={SpinnerSize.large} label="loading" /> 
+                    </Dialog>
                     : null }
 
+                    { this.state.showPipelineForm ?  
+                        <ParametersForm onSubmit={this.submit} schema={this.state.schema} uiSchema={this.state.uiSchema} formData={this.state.formData} />
+                    
+                    : null } 
+                    
                     { this.state.submitted ? 
                         <SubmitDialog isDialogOpen={true} onClose={()=>{this.setState({submitted:false})}} buildUrl={this.state.submittedBuildUrl!}></SubmitDialog>
                     : null } 
@@ -155,21 +169,44 @@ class Hub extends React.Component<{}, IHubStateProps> {
 
     private onSelectBuildDefinition = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>) => {
         console.log(`Selected Build ID: ${item.id} Text: ${item.text}`)
-        this.setState({selectedBuildID:parseInt(item.id)})
+        this.setState({selectedBuildID:parseInt(item.id), loading:true, showPipelineForm:false})
+
         
         ADOAPI.getSchemaFilesFromBuild(parseInt(item.id),
                                        this.state.settings.branchName,
                                        this.state.settings.projectName, 
                                        this.state.settings.schemaFileName,
-                                       this.state.settings.uiSchemaFileName).then((value:[string,string] | undefined) =>{
-            var schema = JSON.parse(value![0])
+                                       this.state.settings.uiSchemaFileName).then( async (value:[string,string] | undefined) =>{
+            var schemaRaw:JSONSchema7 = JSON.parse(value![0])
+            var schema:any                                
+            try {
+                console.log(`schemaRaw ${JSON.stringify(schemaRaw)}`);
+                var header = await ADOAPI.getAuthorizationHeader();
+                schema = await $RefParser.dereference(schemaRaw,{
+                    resolve: {
+                        file: false,                    // Don't resolve local file references
+                        http: {
+                          timeout: 2000,                // 2 second timeout
+                        //   withCredentials: true,  // Include auth credentials when resolving HTTP references
+                          headers :  {Authorization: header }
+                        }
+                }});
+                console.log(`schemaOut ${JSON.stringify(schema)}`);
+                
+                //schema = JSON.parse(schemaRaw)
+            }
+              catch(err) {
+                console.error(err);
+                throw err;
+            }
+            
             var uiSchema = JSON.parse(value![1])
             LoadFormData.loadForm(schema, uiSchema).then(value => {
                 console.log(`schema ${JSON.stringify(schema)}`)
                 console.log(`UIschema ${JSON.stringify(uiSchema)}`)
-                this.setState({showPipelineForm:true, formData:value!, schema:schema, uiSchema:uiSchema})
-            }).catch( (e:any) => {this.setState({ errorMsg:e.message, showError:true, showPipelineForm:false})});    
-        }).catch( (e:any) => {this.setState({errorMsg:e.message, showError:true, showPipelineForm:false})});          
+                this.setState({showPipelineForm:true, formData:value!, schema:schema, uiSchema:uiSchema, loading:false})
+            }).catch( (e:any) => {this.setState({ errorMsg:e.message, showError:true, showPipelineForm:false,  loading:false})});    
+        }).catch( (e:any) => {this.setState({errorMsg:e.message, showError:true, showPipelineForm:false,  loading:false})});          
     };
 
     private getSecrets() : {[key:string]:boolean} {
@@ -193,6 +230,8 @@ class Hub extends React.Component<{}, IHubStateProps> {
 
 
     private submit(props:any){
+        this.setState({loading:true});
+
         console.log("Data submitted: ",  JSON.stringify(props.formData));
         console.log("State: ",  JSON.stringify(this.state));
         console.log("Selected Build: ",  JSON.stringify(this.state.selectedBuildID!));
@@ -205,7 +244,7 @@ class Hub extends React.Component<{}, IHubStateProps> {
         ADOAPI.queueBuild(this.state.selectedBuildID!,params,secrets,this.state.settings.projectName).then( (url:string | undefined) => {
             // throw({message:"ERRROR!"})
             this.setState({submitted:true, 
-                submittedBuildUrl:url
+                submittedBuildUrl:url, loading:false
         });
         
     }).catch( (e:any) => {

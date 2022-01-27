@@ -12,6 +12,7 @@
     "rootDir": "src/",
     "outDir": "dist/",
     "jsx": "react",
+    "esModuleInterop": true,
     "lib": ["es2017", "dom"],
     "types": ["react", "node"]  
   }  

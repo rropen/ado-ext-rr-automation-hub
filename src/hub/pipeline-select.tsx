@@ -2,8 +2,10 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { Dropdown } from "azure-devops-ui/Dropdown";
-import { IListBoxItem } from "azure-devops-ui/ListBox";
+import { IListBoxItem,LoadingCell,ListBoxItemType  } from "azure-devops-ui/ListBox";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
+import { GroupedItemProvider } from "azure-devops-ui/Utilities/GroupedItemProvider";
+import { ITableColumn } from "azure-devops-ui/Table";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Observer } from "azure-devops-ui/Observer";
 import {
@@ -32,7 +34,34 @@ interface PipelineSelectPropsState {
     showHelpPanel: boolean;
 }
 
+export const loadingItem: IListBoxItem = {
+    id: "loading",
+    type: ListBoxItemType.Loading,
+    render: (
+        rowIndex: number,
+        columnIndex: number,
+        tableColumn: ITableColumn<IListBoxItem<{}>>,
+        tableItem: IListBoxItem<{}>
+    ) => {
+        return (
+            <LoadingCell
+                key={rowIndex}
+                columnIndex={columnIndex}
+                tableColumn={tableColumn}
+                tableItem={tableItem}
+                // onMount={this.onLoadingMount}
+            />
+        );
+    }
+};
+
+
 export class PipelineSelect extends React.Component<PipelineSelectProps,PipelineSelectPropsState> {
+    private loading = new ObservableValue<boolean>(false);
+    // private items = new ObservableValue<ArrayItemProvider<IListBoxItem>>(
+    //     new ArrayItemProvider([])
+    // )
+
     constructor(props: PipelineSelectProps) {
         super(props);
         this.state = { showHelpPanel: false };
@@ -42,6 +71,12 @@ export class PipelineSelect extends React.Component<PipelineSelectProps,Pipeline
     }
     
     render(): JSX.Element { 
+        
+        
+        // this.items.value = new ArrayItemProvider(
+        //     [...this.props.pipelineIDNames.value.value, this.loadingItem]
+        // );
+
         return (
             <div>
                 {this.state.showHelpPanel && (
@@ -65,13 +100,15 @@ export class PipelineSelect extends React.Component<PipelineSelectProps,Pipeline
                                 }) => (
                                 <Dropdown
                                 ariaLabel="Basic"
-                                className="example-dropdown"
+                                className="pipeline-select"
                                 placeholder="Select Automation"
                                 items = {observableProps.itemProvider}
+                                loading = {this.loading}
                                 onSelect={this.props.onSelect}
                                     />
                                 )}
                             </Observer>
+                            
                             </HeaderTitle>
                         </HeaderTitleRow>
                     </HeaderTitleArea>

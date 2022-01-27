@@ -1,4 +1,5 @@
 const path = require("path");
+const webpack = require('webpack');
 const fs = require("fs");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
@@ -31,9 +32,15 @@ module.exports = {
     alias: {
       "azure-devops-extension-sdk": path.resolve(
         "node_modules/azure-devops-extension-sdk"
-      )
+      ),
+      process: "process/browser"
     },
     fallback: {
+      util: require.resolve('util'),
+      https: require.resolve('https-browserify'),
+      http: require.resolve("stream-http"),
+      process: require.resolve('process/browser'),
+      buffer: require.resolve('buffer')
     }
   },
   stats: {
@@ -64,5 +71,11 @@ module.exports = {
       }
     ]
   },
-  plugins: [new CopyWebpackPlugin({patterns: [{ from: "**/*.html", context: "src" }]})]
+  plugins: [
+    new CopyWebpackPlugin({patterns: [{ from: "**/*.html", context: "src" }]}),
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+      Buffer: ['buffer', 'Buffer'],
+    })
+  ]
 };
