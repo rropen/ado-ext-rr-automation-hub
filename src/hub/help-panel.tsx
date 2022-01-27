@@ -2,7 +2,9 @@ import * as React from "react";
 import { CodeBlock, googlecode,dracula } from "react-code-blocks";
 
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
+
 import { ISimpleListCell } from "azure-devops-ui/List";
+import { Link } from "azure-devops-ui/Link";
 import { MenuItemType } from "azure-devops-ui/Menu";
 import { IStatusProps, Status, Statuses, StatusSize } from "azure-devops-ui/Status";
 import {
@@ -132,6 +134,31 @@ export class HelpContent extends React.Component<any,any> {
 
                 <p></p>
 
+                <h6> Reference Schemas (<code>$ref</code>)  </h6>
+
+                <p>The extensions supports referencing schemas from other git repositories:</p>
+
+                <CodeBlock
+                text={`
+                "some_reference_object": {
+                    "type": "object",
+                    "title": "Some Title",
+                    "properties": {
+                        "$ref": <url> 
+                    }
+                  }       
+`}
+                language="json"
+                showLineNumbers={false}
+                startingLineNumber={1}
+                theme={this.theme}
+                />
+                <p></p>
+                <p>To refrence a Git repo, substitute the <code>url</code> for:</p> 
+                <p><code>{"https://dev.azure.com/<org>/<project>/_apis/git/repositories/ <reponame>/items?path=<schema filename>&api-version=6.0"}</code></p>
+                <p>This uses the API described <Link href="https://docs.microsoft.com/en-us/rest/api/azure/devops/git/items/get?view=azure-devops-rest-6.0">here</Link>. This includes options for specifying the version/branch/commit ids</p>
+                    
+                
                 <h6> UI Schema File Name </h6>
 
                 <p> The auto-generatd UI can be customised using a separate JSON file. This setting defines this file and the default is <code>azure-pipelines-variable-schema-ui.json</code> </p>
