@@ -44,13 +44,14 @@ import {
 
 import * as SDK from "azure-devops-extension-sdk";
 
+import {Logger,LogError} from "./logger"
 
 export const  getAuthorizationHeader = async () => {
     try{
     var token = await SDK.getAccessToken()
         return token ? ("Bearer " + token) : ""; 
     } catch (e) {
-        console.log(JSON.stringify(e));
+        LogError(e)
         throw(e)
     }
 }
@@ -65,7 +66,7 @@ export const queueBuild = async (buildDefID:number, parameters: {[key:string]:st
 
     try{
         var _params:any ={}
-        console.log(`secrets: ${JSON.stringify(secrets)}`)  
+        Logger.debug(`secrets: ${JSON.stringify(secrets)}`)  
         for (const [key, val] of Object.entries(parameters)) {
             _params[key] = {
                 isSecret: false,
@@ -75,18 +76,18 @@ export const queueBuild = async (buildDefID:number, parameters: {[key:string]:st
                 _params[key].isSecret = true
             }
           }
-        console.log(`_params: ${JSON.stringify(_params)}`)  
+        Logger.debug(`_params: ${JSON.stringify(_params)}`)  
         var runParms:RunPipelineParameters = 
         {
             variables: _params
         }
 
         let submitted:Run = await getClient(PipelineRestClient).runPipeline(runParms,buildDefID,project)
-        console.log(`submitted run: ${JSON.stringify(submitted)}`)  
+        Logger.debug(`submitted run: ${JSON.stringify(submitted)}`)  
         return submitted._links.web.href
 
     } catch (e) {
-        console.log(JSON.stringify(e));
+        LogError(e)
         throw(e)
     }
 }
@@ -103,10 +104,10 @@ export const getBuildDefinitions = async (project:string, folder?:string|undefin
     try{
         var buildDefs:BuildDefinitionReference[] = await getClient(BuildRestClient).getDefinitions(project,undefined,undefined,undefined,
             undefined,undefined,undefined,undefined,undefined,folder)
-        console.log(`Builds: ${JSON.stringify(buildDefs)}`)  
+        Logger.debug(`Builds: ${JSON.stringify(buildDefs)}`)  
         return buildDefs      
     } catch (e) {
-        console.log(e);
+        LogError(e)
         throw(e)
     }
 }
@@ -119,11 +120,11 @@ export const getCurrentUser = async(): Promise<GraphUser | undefined>=>
     try{
         // await delay(15000)
         var currentUser = await getClient(GraphRestClient).getUser(SDK.getUser().descriptor);           
-        console.log(`Current User: ${JSON.stringify(currentUser)}`)
+        Logger.debug(`Current User: ${JSON.stringify(currentUser)}`)
         //callback(this);
         return currentUser
     } catch (e) {
-        console.log(e);
+        LogError(e)
         throw(e)
     }
 }
@@ -135,10 +136,10 @@ export const  getProjects = async (): Promise<TeamProjectReference[] | undefined
 {
     try{
         let projects = await getClient(CoreRestClient).getProjects()
-        console.log(`projects: ${JSON.stringify(projects)}`)  
+        Logger.debug(`projects: ${JSON.stringify(projects)}`)  
         return projects     
     } catch (e) {
-        console.log(e);
+        LogError(e)
         throw(e)
 
     }
@@ -152,10 +153,10 @@ export const getCurrentProject = async (): Promise<IProjectInfo | undefined> =>
     try{
         const projectService = await SDK.getService<IProjectPageService>(CommonServiceIds.ProjectPageService);
         const project = await projectService.getProject();
-        console.log(`project: ${JSON.stringify(project)}`)  
+        Logger.debug(`project: ${JSON.stringify(project)}`)  
         return project     
     } catch (e) {
-        console.log(e);
+        LogError(e)
         throw(e)
 
     }
@@ -169,7 +170,7 @@ export const getCurrentIdentityUser = async () : Promise< IIdentity | undefined>
     try{
         var identityService = SDK.getService(IdentityServiceIds["IdentityService"]);
         var currentUser = await getClient(GraphRestClient).getUser(SDK.getUser().descriptor);
-        console.log(`Current User: ${JSON.stringify(currentUser)}`)
+        Logger.debug(`Current User: ${JSON.stringify(currentUser)}`)
 
         var searchRequest = { 
             query: currentUser.mailAddress,
@@ -181,17 +182,17 @@ export const getCurrentIdentityUser = async () : Promise< IIdentity | undefined>
         var currentIdentity;
         await identityService.then(async function (identityService:any) {
             await identityService.searchIdentitiesAsync(searchRequest.query).then(function ( identities:any) {
-                // console.log(`this: ${JSON.stringify(self)}`)
-                // console.log(`identities: ${JSON.stringify(identities)}`)
+                // Logger.debug(`this: ${JSON.stringify(self)}`)
+                // Logger.debug(`identities: ${JSON.stringify(identities)}`)
                 currentIdentity = identities[0];
                 return identities});
             return;
         });
                     
-        console.log(`this currentIdentity: ${JSON.stringify(currentIdentity)}`)
+        Logger.debug(`this currentIdentity: ${JSON.stringify(currentIdentity)}`)
         return currentIdentity
     } catch (e) {
-        console.log(e);
+        LogError(e)
         throw(e)
     }
 }  
@@ -213,12 +214,12 @@ export const getSchemaFilesFromBuild = async (buildDefID: number, branch:string,
 
         var build:BuildDefinition
         build = await getClient(BuildRestClient).getDefinition(project,buildDefID)
-        console.log(`repository for build: ${JSON.stringify(buildDefID)} ${JSON.stringify(build.repository)}`)  
+        Logger.debug(`repository for build: ${JSON.stringify(buildDefID)} ${JSON.stringify(build.repository)}`)  
         
         var gitClient:GitRestClient = getClient(GitRestClient);
         var repo:GitRepository
         repo = await gitClient.getRepository(build.repository.id)
-        console.log(`git repository for build: ${JSON.stringify(repo)}`)  
+        Logger.debug(`git repository for build: ${JSON.stringify(repo)}`)  
 
         var version:GitVersionDescriptor = {
             version: branch,
@@ -234,7 +235,7 @@ export const getSchemaFilesFromBuild = async (buildDefID: number, branch:string,
 
         var content:ArrayBuffer = await gitClient.getItemContent(tprops.repositoryId,tprops.path,project,"",VersionControlRecursionType.None,false,false,false,tprops.versionDescriptor)
         var schemaString:string = new TextDecoder().decode(content)
-        console.log(`content: ${JSON.stringify(schemaString)}`)  
+        Logger.debug(`content: ${JSON.stringify(schemaString)}`)  
 
         var tprops = {
             repositoryId:repo.id,
@@ -246,7 +247,7 @@ export const getSchemaFilesFromBuild = async (buildDefID: number, branch:string,
         try{
         var content:ArrayBuffer = await gitClient.getItemContent(tprops.repositoryId,tprops.path,project,"",VersionControlRecursionType.None,false,false,false,tprops.versionDescriptor)
         UIschemaString = new TextDecoder().decode(content)
-        console.log(`content: ${JSON.stringify(UIschemaString)}`)  
+        Logger.debug(`content: ${JSON.stringify(UIschemaString)}`)  
         } catch ( e ) {
             if (e instanceof Error){ 
                 if (!e.message.includes("could not be found in the repository"))
@@ -259,7 +260,7 @@ export const getSchemaFilesFromBuild = async (buildDefID: number, branch:string,
         return [schemaString,UIschemaString]      
 
     } catch (e) {
-        console.log(e);
+        LogError(e)
         throw(e)
 
     }

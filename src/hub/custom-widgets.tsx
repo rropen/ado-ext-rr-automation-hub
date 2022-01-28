@@ -11,6 +11,7 @@ import {
 import {PeoplePickerProvider} from "@byndit/azure-devops-extension-api/Identities";
 
 import * as ADOAPI from "./ado-api";
+import {Logger} from "./logger"
 
 // field we use for filling in the form for a given identity
 const getIdentityField = (id:IIdentity) => `'${id.displayName}'`
@@ -31,10 +32,10 @@ export class IdentityPickerHook extends React.Component<IdentityPickerHookProps>
 
     constructor(props: IdentityPickerHookProps) {
         super(props);
-        console.log(`props ${JSON.stringify(props)}`)
-        console.log(`useCurrentUser ${JSON.stringify(props.useCurrentUser)}`)
+        Logger.debug(`props ${JSON.stringify(props)}`)
+        Logger.debug(`useCurrentUser ${JSON.stringify(props.useCurrentUser)}`)
         if(props.useCurrentUser){
-            console.log("creating identity picker with current user")
+            Logger.debug("creating identity picker with current user")
             ADOAPI.getCurrentIdentityUser().then( (value) => {
                 this.onChange(value!)
             })
@@ -87,10 +88,10 @@ export class IdentitiesPickerHook extends React.Component<IdentityPickerHookProp
 
     constructor(props: IdentityPickerHookProps) {
         super(props);
-        console.log(`props ${JSON.stringify(props)}`)
-        console.log(`useCurrentUser ${JSON.stringify(props.useCurrentUser)}`)
+        Logger.debug(`props ${JSON.stringify(props)}`)
+        Logger.debug(`useCurrentUser ${JSON.stringify(props.useCurrentUser)}`)
         if(props.useCurrentUser){
-            console.log("creating identity picker with current user")
+            Logger.debug("creating identity picker with current user")
             ADOAPI.getCurrentIdentityUser().then( (value) => {
                 this.onIdentityAdded(value!)
             })
@@ -116,7 +117,7 @@ export class IdentitiesPickerHook extends React.Component<IdentityPickerHookProp
         }  
 
     private onIdentitiesRemoved = (identities: IIdentity[]) => {
-        console.log(
+        Logger.debug(
             `Identity Removed: ${identities.map((identity) => identity.displayName).join(", ")}`
         );
         
@@ -129,14 +130,14 @@ export class IdentitiesPickerHook extends React.Component<IdentityPickerHookProp
     };
 
     private onIdentityAdded = (identity: IIdentity) => {
-        console.log(`Identity Added: ${identity.displayName}`);
-        console.log(`Identity Added: ${JSON.stringify(identity)}`)
+        Logger.debug(`Identity Added: ${identity.displayName}`);
+        Logger.debug(`Identity Added: ${JSON.stringify(identity)}`)
         this.selectedIdentities.push(identity);
         this.updateFormProps();
     };
 
     private onIdentityRemoved = (identity: IIdentity) => {
-        console.log(`Identity Added: ${identity.displayName}`);
+        Logger.debug(`Identity Added: ${identity.displayName}`);
         this.selectedIdentities.value = this.selectedIdentities.value.filter(
             (entity: IIdentity) => entity.entityId !== identity.entityId
         );

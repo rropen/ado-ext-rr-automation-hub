@@ -5,6 +5,7 @@ import { Dropdown } from "azure-devops-ui/Dropdown";
 import { FormItem } from "azure-devops-ui/FormItem";
 import { TextField, TextFieldWidth } from "azure-devops-ui/TextField";
 import { DropdownSelection } from "azure-devops-ui/Utilities/DropdownSelection";
+import {Logger} from "./logger"
 
 export interface IPanelExampleState {
     expanded: boolean
@@ -38,7 +39,7 @@ export class SettingsPanel extends React.Component<IPanelExampleProps, IPanelExa
 
     dismiss(){
         this.setState({ expanded: false })
-        // console.log("Calling on dismiss")
+        // Logger.debug("Calling on dismiss")
         this.props.onDismiss()
     }
 

@@ -1,4 +1,5 @@
 
+import {Logger} from "./logger"
 
 const isObject = (value:any):any => {
   return !!(value && typeof value === "object" && !Array.isArray(value));
@@ -69,12 +70,12 @@ export const findNestedObject = (object:any = {}, keyToMatch:string ="", valueTo
     
     // We'll work on finding our nested object here...
     const entries = Object.entries(object);
-    //console.log(` entries  ${JSON.stringify(entries)} `)
+    //Logger.debug(` entries  ${JSON.stringify(entries)} `)
 
     for (let i = 0; i < entries.length; i += 1) {
       const [objectKey, objectValue] = entries[i];
       
-      // console.log(`checking key ${objectKey} ${keyToMatch} and value ${objectValue} ${valueToMatch}`)
+      // Logger.debug(`checking key ${objectKey} ${keyToMatch} and value ${objectValue} ${valueToMatch}`)
       if (objectValue === valueToMatch && objectKey === keyToMatch) {
         // create copy via map, otherwise we will store a ref
         foundKeys.push(currentkeys.map((x)=>x))
@@ -86,7 +87,7 @@ export const findNestedObject = (object:any = {}, keyToMatch:string ="", valueTo
       currentkeys.pop()
     }
   }
-  // console.log(` returning ${JSON.stringify(foundKeys)} `)
+  // Logger.debug(` returning ${JSON.stringify(foundKeys)} `)
   return foundKeys;
 };
 
@@ -114,11 +115,11 @@ export const testfindNestedObject = () => {
   const expected:Array<Array<string>> = [["a","e","f"],["a","e","f2"]]
 
   if(JSON.stringify(expected) != JSON.stringify(foundkeys)){
-    console.log("testFindNestedFail")
+    Logger.debug("testFindNestedFail")
     
   }
 
-  console.log(`foundkeys: ${JSON.stringify(foundkeys)}`)
-  console.log(`expected: ${JSON.stringify(expected)}`)
+  Logger.debug(`foundkeys: ${JSON.stringify(foundkeys)}`)
+  Logger.debug(`expected: ${JSON.stringify(expected)}`)
 };
 

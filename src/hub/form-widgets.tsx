@@ -5,33 +5,31 @@ import {
     IdentitiesPickerHook, 
     IdentityPickerHook
 } from "./custom-widgets"
-
-
-
+import {Logger} from "./logger"
 
 const IdentityWidget = (props:any) => {
-    console.log(`IdentityWidget props: ${JSON.stringify(props.value)}`)
+    Logger.debug(`IdentityWidget props: ${JSON.stringify(props.value)}`)
     return (
         <IdentityPickerHook formProps={props}/>
     );
 }; 
 
 const CurrentIdentityWidget = (props:any) => {
-    console.log(`CurrentIdentityWidget props: ${JSON.stringify(props.value)}`)
+    Logger.debug(`CurrentIdentityWidget props: ${JSON.stringify(props.value)}`)
     return (
         <IdentityPickerHook formProps={props} useCurrentUser={true} />
     );
 }; 
 
 const IdentitiesWidget = (props:any) => {
-    console.log(`IdentitiesWidget props: ${JSON.stringify(props.value)}`)
+    Logger.debug(`IdentitiesWidget props: ${JSON.stringify(props.value)}`)
     return (
         <IdentitiesPickerHook formProps={props}/>
     );
 }; 
 
 const CurrentIdentitiesWidget = (props:any) => {
-    console.log(`CurrentIdentitiesWidget props: ${JSON.stringify(props.value)}`)
+    Logger.debug(`CurrentIdentitiesWidget props: ${JSON.stringify(props.value)}`)
     return (
         <IdentitiesPickerHook formProps={props} useCurrentUser={true} />
     );

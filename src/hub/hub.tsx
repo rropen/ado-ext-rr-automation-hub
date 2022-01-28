@@ -24,6 +24,7 @@ import {ErrorDialog} from "./error-dialog"
 import * as LoadFormData from "./load-form-data"
 import * as Flat from "./flatten"
 import {SettingsPanel, ISettings} from "./settings-panel"
+import {LogError, Logger} from "./logger"
 
 
 interface IHubStateProps {
@@ -94,13 +95,14 @@ class Hub extends React.Component<{}, IHubStateProps> {
             // await here rather than then
             // var tp = await ADOAPI.getProjects();
             // this.setState({projectNames : Array.from(tp!, x => x.name!)});
-            console.log("SDK init finished")
+            Logger.debug("SDK init finished")
             SDK.notifyLoadSucceeded();
         })
     }
 
     componentDidUpdate(){
-        console.log(`update called ${JSON.stringify(this.state)}`)
+        Logger.debug(`update called ${JSON.stringify(this.state)}`)
+        // Logger.debug(`update called ${JSON.stringify(this.state)}`)
     }
 
     loadBuildDefinitions(){
@@ -112,7 +114,9 @@ class Hub extends React.Component<{}, IHubStateProps> {
             //transform value to an object that confirms to IListboxItem, so can pass it back to the dropdown
             var buildDefsIDName = value!.map((a) => ({id: a.id.toString(), text: a.name}))
             if (buildDefsIDName.length === 0){ 
-                throw ({message:`Could not find any pipelines in project ${this.state.settings.projectName}`})
+                var e = {message:`Could not find any pipelines in project ${this.state.settings.projectName}`}
+                LogError(e)
+                throw (e)
             }
             this.buildDefsItemProvider.value = new ArrayItemProvider(
                 buildDefsIDName
@@ -168,7 +172,7 @@ class Hub extends React.Component<{}, IHubStateProps> {
     }
 
     private onSelectBuildDefinition = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>) => {
-        console.log(`Selected Build ID: ${item.id} Text: ${item.text}`)
+        Logger.debug(`Selected Build ID: ${item.id} Text: ${item.text}`)
         this.setState({selectedBuildID:parseInt(item.id), loading:true, showPipelineForm:false})
 
         
@@ -180,7 +184,7 @@ class Hub extends React.Component<{}, IHubStateProps> {
             var schemaRaw:JSONSchema7 = JSON.parse(value![0])
             var schema:any                                
             try {
-                console.log(`schemaRaw ${JSON.stringify(schemaRaw)}`);
+                Logger.debug(`schemaRaw ${JSON.stringify(schemaRaw)}`);
                 var header = await ADOAPI.getAuthorizationHeader();
                 schema = await $RefParser.dereference(schemaRaw,{
                     resolve: {
@@ -191,7 +195,7 @@ class Hub extends React.Component<{}, IHubStateProps> {
                           headers :  {Authorization: header }
                         }
                 }});
-                console.log(`schemaOut ${JSON.stringify(schema)}`);
+                Logger.debug(`schemaOut ${JSON.stringify(schema)}`);
                 
                 //schema = JSON.parse(schemaRaw)
             }
@@ -202,8 +206,8 @@ class Hub extends React.Component<{}, IHubStateProps> {
             
             var uiSchema = JSON.parse(value![1])
             LoadFormData.loadForm(schema, uiSchema).then(value => {
-                console.log(`schema ${JSON.stringify(schema)}`)
-                console.log(`UIschema ${JSON.stringify(uiSchema)}`)
+                Logger.debug(`schema ${JSON.stringify(schema)}`)
+                Logger.debug(`UIschema ${JSON.stringify(uiSchema)}`)
                 this.setState({showPipelineForm:true, formData:value!, schema:schema, uiSchema:uiSchema, loading:false})
             }).catch( (e:any) => {this.setState({ errorMsg:e.message, showError:true, showPipelineForm:false,  loading:false})});    
         }).catch( (e:any) => {this.setState({errorMsg:e.message, showError:true, showPipelineForm:false,  loading:false})});          
@@ -211,7 +215,7 @@ class Hub extends React.Component<{}, IHubStateProps> {
 
     private getSecrets() : {[key:string]:boolean} {
         var flatSchema = Flat.flatten(this.state.uiSchema,"")
-        console.log("flatSchema: ",  JSON.stringify(flatSchema));
+        Logger.debug("flatSchema: ",  JSON.stringify(flatSchema));
         const entries = Object.entries(flatSchema);
 
         var secrets:{[key:string]:boolean} = {}
@@ -232,9 +236,9 @@ class Hub extends React.Component<{}, IHubStateProps> {
     private submit(props:any){
         this.setState({loading:true});
 
-        console.log("Data submitted: ",  JSON.stringify(props.formData));
-        console.log("State: ",  JSON.stringify(this.state));
-        console.log("Selected Build: ",  JSON.stringify(this.state.selectedBuildID!));
+        Logger.debug("Data submitted: ",  JSON.stringify(props.formData));
+        Logger.debug("State: ",  JSON.stringify(this.state));
+        Logger.debug("Selected Build: ",  JSON.stringify(this.state.selectedBuildID!));
 
         //formData.formData = {}
         var params = Flat.flatten(props.formData,"");
@@ -249,8 +253,8 @@ class Hub extends React.Component<{}, IHubStateProps> {
         
     }).catch( (e:any) => {
         this.setState({submitted:false, errorMsg:e.message, showError:true})
-        console.log("Error ",  JSON.stringify(e.message));
-        console.log("State ",  JSON.stringify(this.state));
+        Logger.debug("Error ",  JSON.stringify(e.message));
+        Logger.debug("State ",  JSON.stringify(this.state));
     });
 
     }
