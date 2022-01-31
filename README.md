@@ -7,4 +7,6 @@ Extension adds a high level Hub page that:
 - Once the form is filled out, the associated pipeline is run by passing the JSON variales to the pipeline variables 
 - The pipeline variables are presented as a flattened JSON key-value object, e.g. `"contact.address.street_name" : "main street"` 
 
+# User Guide
 
+Please see [here](./src/user-guide.md)

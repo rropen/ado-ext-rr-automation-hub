@@ -68,6 +68,10 @@ module.exports = {
       {
         test: /\.html$/,
         use: "file-loader"
+      },
+      {
+        test: /\.md$/,
+        use: 'raw-loader'
       }
     ]
   },

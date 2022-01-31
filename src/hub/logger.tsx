@@ -1,12 +1,16 @@
 import {ROARR, Roarr, logLevels,getLogLevelName} from 'roarr';
 import {serializeError} from 'serialize-error';
-  
+
+
+var LOGLEVEL = logLevels.debug
+
+
 ROARR.write = (message) => {
   const payload = JSON.parse(message);
 
   payload.context.logLevelName = getLogLevelName(payload.context.logLevel)
 
-  if (payload.context.logLevel > logLevels.debug) {
+  if (payload.context.logLevel >= LOGLEVEL) {
     console.log(payload);
   }
 
