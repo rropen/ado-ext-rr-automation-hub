@@ -9,4 +9,8 @@ Extension adds a high level Hub page that:
 
 # User Guide
 
-Please see [here](./src/user-guide.md)
+Please see [here](user-guide.md)
+
+# Dev and Architecture
+
+Please see [here](dev-guide.md)

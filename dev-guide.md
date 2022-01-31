@@ -1,3 +1,4 @@
+
 # Problem Statement
 
 ### Specific 
@@ -28,10 +29,6 @@ Overview:
 
 ![Azure DevOps Architecture](arch.png)
 
-
-
-
-
 --- 
 
 # Development Docs 
@@ -49,7 +46,7 @@ Overview:
 
 ## TODO
 
-
+- Change name to 'Self-Service Hub' ?
 - Extension default settings stored somewhere? and settable by admins only
 - Use pipeline folders to define automation, add folder to settings 
 - Wrap promise errors in ADO error prompt? 

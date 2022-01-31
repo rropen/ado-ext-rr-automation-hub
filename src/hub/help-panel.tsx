@@ -22,7 +22,7 @@ import {
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 
 import * as SimpleSchema from "./demo-schema";
-import * as MD from './user-guide.md';
+import * as MD from './../../user-guide.md';
 import { Logger } from "./logger";
 
 export class HelpContent extends React.Component<any,any> {
