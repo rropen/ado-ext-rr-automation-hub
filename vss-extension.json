@@ -36,10 +36,10 @@
     {
       "id": "automation-hub-group",
       "type": "ms.vss-web.hub-group",
-      "description": "Automation hub group",
+      "description": "Self-Service hub group",
       "targets": ["ms.vss-web.project-hub-groups-collection"],
       "properties": {
-        "name": "Automation Hub",
+        "name": "Self-Service Hub",
         "icon": {
           "dark": "img/RR-Monogram-RGB-Blue-sq2-reverse.png",
           "light": "img/RR-Monogram-RGB-Blue-sq2.png"

@@ -14,9 +14,12 @@ export interface IPanelExampleState {
 
 export interface ISettings {
     projectName: string
-    branchName: string
+    folder : string | undefined
+    branchName: string | undefined
+    tagName: string | undefined
     schemaFileName: string
     uiSchemaFileName: string
+    id?: string | undefined
 }
 
 export interface IPanelExampleProps {
@@ -25,6 +28,21 @@ export interface IPanelExampleProps {
     onDismiss: () => void 
     onSave: (settings: ISettings) => void
 }
+
+export const getSettingsDefaults = () :ISettings => {
+
+    var defs: ISettings ={
+        projectName: "", 
+        folder: undefined,
+        schemaFileName:"azure-pipelines-variable-schema.json",
+        uiSchemaFileName:"azure-pipelines-variable-schema-ui.json",
+        branchName: "main",
+        tagName: undefined,
+        id: "settings"
+    }
+    return defs
+}
+
 
 export class SettingsPanel extends React.Component<IPanelExampleProps, IPanelExampleState> {
 
@@ -95,27 +113,51 @@ export class SettingsPanel extends React.Component<IPanelExampleProps, IPanelExa
                         />
                         </FormItem>
 
-                        {/* <SettingsFormItem 
-                            label="Project Name"
-                            message="Project containing pipelines"
-                            value={this.state.settings.projectName}
+                        <SettingsFormItem 
+                            label="Folder Path  (optional)"
+                            message = "Name of folder containing pipelines"
+                            value={this.state.settings.folder!}
                             onChange={(e, val) => {
+                                Logger.debug(`setting folder ${val}`)
+                                if(val === ""){
+                                    val = undefined
+                                }
                                 this.setState(prevState  => ({
                                     settings: 
-                                        { ...prevState.settings, projectName:val}}
+                                        { ...prevState.settings, folder:val}}
                                         )
                                     )
                             }}    
-                        /> */}
+                        />
 
                         <SettingsFormItem 
                             label="Branch Name"
-                            message = "Name of branch containing pipeline files"
-                            value={this.state.settings.branchName}
+                            message = "Name of git branch containing pipeline files. Do not define Branch and Tag at the same time"
+                            value={this.state.settings.branchName!}
                             onChange={(e, val) => {
+                                if(val === ""){
+                                    val = undefined
+                                }
                                 this.setState(prevState  => ({
                                     settings: 
                                         { ...prevState.settings, branchName:val}}
+                                        )
+                                    )
+                            }}    
+                        />
+
+                        <SettingsFormItem 
+                            label="Tag Name"
+                            message = "Name of git tag containing pipeline files. Do not define Branch and Tag at the same time"
+                            value={this.state.settings.tagName!}
+                            onChange={(e, val) => {
+                                
+                                if(val === ""){
+                                    val = undefined
+                                }
+                                this.setState(prevState  => ({
+                                    settings: 
+                                        { ...prevState.settings, tagName:val}}
                                         )
                                     )
                             }}    

@@ -63,20 +63,30 @@ class Hub extends React.Component<{}, IHubStateProps> {
             showError: false, errorMsg:undefined, showSettingsPanel:false,
             settings: {
                 projectName: "", 
+                folder: undefined,
                 schemaFileName:"azure-pipelines-variable-schema.json",
                 uiSchemaFileName:"azure-pipelines-variable-schema-ui.json",
-                branchName: "main"
+                branchName: "main",
+                tagName: undefined
             },
             projectNames:[],
             loading: false
         }
         this.submit = this.submit.bind(this);
+
     }  
     
     componentDidMount() {
         SDK.init(
             {loaded: false}
         ).then(async() => {
+            try {
+                var loadedSettings:ISettings = await ADOAPI.loadSettings()
+                this.setState({settings:loadedSettings})
+            } catch (e) {
+                Logger.debug("could not load settings")
+                LogError(e)
+            }
 
             ADOAPI.getCurrentProject().then((value)=>{
                 this.setState(prevState  => ({
@@ -110,7 +120,7 @@ class Hub extends React.Component<{}, IHubStateProps> {
             [loadingItem]
         );
 
-        ADOAPI.getBuildDefinitions(this.state.settings.projectName).then( (value) => { 
+        ADOAPI.getBuildDefinitions(this.state.settings.projectName, this.state.settings.folder).then( (value) => { 
             //transform value to an object that confirms to IListboxItem, so can pass it back to the dropdown
             var buildDefsIDName = value!.map((a) => ({id: a.id.toString(), text: a.name}))
             if (buildDefsIDName.length === 0){ 
@@ -158,7 +168,9 @@ class Hub extends React.Component<{}, IHubStateProps> {
                     { this.state.showSettingsPanel ?             
                         <SettingsPanel settings={this.state.settings} projectNames={this.state.projectNames }
                         onSave={(newSettings) => {
+                            Logger.debug(`Saving ${JSON.stringify(newSettings)}`)
                             this.setState({settings:newSettings, showPipelineForm:false},this.loadBuildDefinitions)
+                            ADOAPI.saveSettings(newSettings)
                             }  
                         } 
                         onDismiss={()=>this.setState({showSettingsPanel:false})}
@@ -177,10 +189,11 @@ class Hub extends React.Component<{}, IHubStateProps> {
 
         
         ADOAPI.getSchemaFilesFromBuild(parseInt(item.id),
-                                       this.state.settings.branchName,
                                        this.state.settings.projectName, 
                                        this.state.settings.schemaFileName,
-                                       this.state.settings.uiSchemaFileName).then( async (value:[string,string] | undefined) =>{
+                                       this.state.settings.uiSchemaFileName,
+                                       this.state.settings.branchName,
+                                       this.state.settings.tagName).then( async (value:[string,string] | undefined) =>{
             var schemaRaw:JSONSchema7 = JSON.parse(value![0])
             var schema:any                                
             try {
@@ -190,17 +203,19 @@ class Hub extends React.Component<{}, IHubStateProps> {
                     resolve: {
                         file: false,                    // Don't resolve local file references
                         http: {
-                          timeout: 2000,                // 2 second timeout
+                          timeout: 5000,                // 2 second timeout
                         //   withCredentials: true,  // Include auth credentials when resolving HTTP references
-                          headers :  {Authorization: header }
-                        }
+                          headers :  {Authorization: header },
+                          redirects: 10                          
+                        },
+                        
                 }});
                 Logger.debug(`schemaOut ${JSON.stringify(schema)}`);
                 
                 //schema = JSON.parse(schemaRaw)
             }
               catch(err) {
-                console.error(err);
+                LogError(err)
                 throw err;
             }
             
@@ -245,14 +260,12 @@ class Hub extends React.Component<{}, IHubStateProps> {
 
         var secrets = this.getSecrets()
         
-        ADOAPI.queueBuild(this.state.selectedBuildID!,params,secrets,this.state.settings.projectName).then( (url:string | undefined) => {
+        ADOAPI.queueBuild(this.state.selectedBuildID!,params,secrets,this.state.settings.projectName,this.state.settings.branchName, this.state.settings.tagName).then( (url:string | undefined) => {
             // throw({message:"ERRROR!"})
-            this.setState({submitted:true, 
-                submittedBuildUrl:url, loading:false
-        });
+            this.setState({submitted:true, submittedBuildUrl:url, loading:false});
         
     }).catch( (e:any) => {
-        this.setState({submitted:false, errorMsg:e.message, showError:true})
+        this.setState({submitted:false, errorMsg:e.message, showError:true, loading:false})
         Logger.debug("Error ",  JSON.stringify(e.message));
         Logger.debug("State ",  JSON.stringify(this.state));
     });

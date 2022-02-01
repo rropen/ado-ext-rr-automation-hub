@@ -47,8 +47,9 @@ Overview:
 ## TODO
 
 - Change name to 'Self-Service Hub' ?
-- Extension default settings stored somewhere? and settable by admins only
-- Use pipeline folders to define automation, add folder to settings 
+- Extension default settings stored somewhere? and settable by admins only - Done set as user context 'extension docs'
+- However, the above might be better in a central Git repo, at least defaults 
+- Use pipeline folders to define automation, add folder to settings - Done 
 - Wrap promise errors in ADO error prompt? 
 - Copy vars from previous run 
 - No Personal Data (make this explicit)

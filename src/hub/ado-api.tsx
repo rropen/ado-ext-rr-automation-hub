@@ -30,12 +30,14 @@ import {
 
 import {
     RunPipelineParameters,
+    RunResourcesParameters,
+    RepositoryResourceParameters,
     Run,
     PipelineRestClient,
     Variable
 } from "@byndit/azure-devops-extension-api/Pipelines";
 
-import { CommonServiceIds, IProjectPageService } from "@byndit/azure-devops-extension-api";
+import { CommonServiceIds, IProjectPageService, IExtensionDataService, IExtensionDataManager, IDocumentOptions, ExtensionDataCollection} from "@byndit/azure-devops-extension-api";
 import { TeamProjectReference } from "azure-devops-node-api/interfaces/CoreInterfaces";
 
 import {
@@ -43,8 +45,10 @@ import {
 } from "@byndit/azure-devops-extension-api/Identities";
 
 import * as SDK from "azure-devops-extension-sdk";
+import {IExtensionContext} from "azure-devops-extension-sdk";
 
 import {Logger,LogError} from "./logger"
+import {ISettings, getSettingsDefaults} from "./settings-panel"
 
 export const  getAuthorizationHeader = async () => {
     try{
@@ -58,10 +62,111 @@ export const  getAuthorizationHeader = async () => {
 
 // may want to be a class if the getClient takes a while and does not cache anywhere... 
 
+const  getExtensionMgr = async ():Promise<IExtensionDataManager> => {
+    var context:IExtensionContext = SDK.getExtensionContext()
+    var token = await SDK.getAccessToken()
+    const dataService = await SDK.getService<IExtensionDataService>(CommonServiceIds.ExtensionDataService);
+    return dataService.getExtensionDataManager(context.id, token)
+}
+
+const getDocCollection = () =>{
+    var context:IExtensionContext = SDK.getExtensionContext()
+    return context.id
+} 
+
+const getDocID = () => {
+    return "settings"
+}
+
+const settingsExist = async ():Promise<boolean> => {
+    var dm:IExtensionDataManager = await getExtensionMgr()
+    var opt:IDocumentOptions = {
+        scopeType: "User"
+    }
+
+    var settingsExist:boolean = false
+
+    // var currentCollections:ExtensionDataCollection[] = await dm.queryCollectionsByName([getDocCollection()])
+    var currentDocs = await dm.getDocuments(getDocCollection(),opt)
+    currentDocs.forEach(element => {
+        if (element.id === getDocID()) settingsExist=true
+    })
+
+    Logger.debug(`return settings exists: ${settingsExist}`)
+    return settingsExist
+}
+
+export const saveSettings = async (settings:ISettings) => {
+    var dm:IExtensionDataManager = await getExtensionMgr()
+    var context:IExtensionContext = SDK.getExtensionContext()
+    var opt:IDocumentOptions = {
+        scopeType: "User"
+    }
+
+    settings.id = getDocID()
+    var exists:boolean = await settingsExist()
+
+    if (!exists){
+        try{
+            Logger.debug(`creating settings doc`)
+            let out = await dm.createDocument(getDocCollection(), settings,opt)
+            Logger.debug(`doc created ${JSON.stringify(out)}`)
+        } catch (e) {
+            LogError(e)
+            throw(e)
+        }
+    }
+    else{
+        try{
+            Logger.debug(`updating settings doc`)
+            var doc = await dm.getDocument(getDocCollection(),getDocID(),opt)
+            var updated = Object.assign(doc,settings)
+            await dm.updateDocument(getDocCollection(),updated,opt)
+        } catch (e) {
+            LogError(e)
+            throw(e)
+        }
+    }
+}
+
+export const deleteAllSettings = async () => {
+    var dm:IExtensionDataManager = await getExtensionMgr()
+    var context:IExtensionContext = SDK.getExtensionContext()
+    var opt:IDocumentOptions = {
+        scopeType: "User"
+    }
+    var currentDocs = await dm.getDocuments(getDocCollection(),opt)
+
+
+}
+
+export const loadSettings = async ():Promise<ISettings> =>
+{
+    var dm:IExtensionDataManager = await getExtensionMgr()
+
+    var opt:IDocumentOptions = {
+        scopeType: "User"
+    }
+
+    try{
+        // var set:ISettings = await dm.getDocument(getDocCollection(),"settings",opt)
+        if (await settingsExist()){
+            var set:ISettings = await dm.getDocument(getDocCollection(),"settings",opt)
+            Logger.debug(`loaded setting from collection ${getDocCollection()} ${JSON.stringify(set)}`)
+            return set  
+        } 
+        Logger.debug(`could not load settings, using defaults`)
+        return getSettingsDefaults()
+    } catch (e) {
+        LogError(e)
+        throw(e)
+    }    
+}
+
 /**
  * Queue pipeline (ADO latest API)
  * */
-export const queueBuild = async (buildDefID:number, parameters: {[key:string]:string}, secrets: {[key:string]:boolean}, project:string): Promise<string | undefined> =>
+export const queueBuild = async (buildDefID:number, parameters: {[key:string]:string}, secrets: {[key:string]:boolean}, project:string, branch?:string |undefined, tag?:string|undefined): Promise<string | undefined> =>
 {
 
     try{
@@ -75,13 +180,41 @@ export const queueBuild = async (buildDefID:number, parameters: {[key:string]:st
             if (Object.keys(secrets).includes(key) && secrets[key] === true){
                 _params[key].isSecret = true
             }
-          }
+        }
+
+        if (branch !== undefined && tag !== undefined){
+            let e = Error(`Cannot define both branch: "${branch}" and tag: "${tag}"`)
+            LogError(e)
+            throw e            
+        }
+
+        var ref: string
+        if (branch !== undefined) {ref = branch}
+        else if (tag !== undefined) {ref = "refs/tags/"+tag}
+        else {ref=""}
+
+        var repoRes:RepositoryResourceParameters = {
+            refName: ref,
+            token: "",
+            tokenType: "",
+            version: "",
+        }  
+
+        var res:RunResourcesParameters = {
+            repositories: {"self": repoRes}
+        }
+
+        // res.repositories
+
         Logger.debug(`_params: ${JSON.stringify(_params)}`)  
         var runParms:RunPipelineParameters = 
         {
-            variables: _params
+            variables: _params,
+            resources: res 
+
         }
 
+        Logger.debug(`submitting: ${JSON.stringify(runParms)}`)  
         let submitted:Run = await getClient(PipelineRestClient).runPipeline(runParms,buildDefID,project)
         Logger.debug(`submitted run: ${JSON.stringify(submitted)}`)  
         return submitted._links.web.href
@@ -102,6 +235,7 @@ export const queueBuild = async (buildDefID:number, parameters: {[key:string]:st
 export const getBuildDefinitions = async (project:string, folder?:string|undefined) : Promise<BuildDefinitionReference[] | undefined> =>
 {
     try{
+        Logger.debug(`folder: ${JSON.stringify(folder)}`)  
         var buildDefs:BuildDefinitionReference[] = await getClient(BuildRestClient).getDefinitions(project,undefined,undefined,undefined,
             undefined,undefined,undefined,undefined,undefined,folder)
         Logger.debug(`Builds: ${JSON.stringify(buildDefs)}`)  
@@ -200,17 +334,23 @@ export const getCurrentIdentityUser = async () : Promise< IIdentity | undefined>
 /**
  * Get schemas from build. Gets repo from build, then get json files from repos
  * */
-export const getSchemaFilesFromBuild = async (buildDefID: number, branch:string, 
+export const getSchemaFilesFromBuild = async (buildDefID: number,
                                               project:string, 
                                               schemaFileName:string,
-                                              uiSchemaFileName:string ): Promise<[string,string] | undefined> =>
+                                              uiSchemaFileName:string,
+                                              branch?:string |undefined, 
+                                              tag?:string|undefined ): Promise<[string,string] | undefined> =>
 { 
     try{
 
         var cc = getClient(CoreRestClient)
         // var ss = cc.
         
-
+        if (branch !== undefined && tag !== undefined){
+            let e = Error(`Cannot define both branch: "${branch}" and tag: "${tag}"`)
+            LogError(e)
+            throw e            
+        }
 
         var build:BuildDefinition
         build = await getClient(BuildRestClient).getDefinition(project,buildDefID)
@@ -221,10 +361,23 @@ export const getSchemaFilesFromBuild = async (buildDefID: number, branch:string,
         repo = await gitClient.getRepository(build.repository.id)
         Logger.debug(`git repository for build: ${JSON.stringify(repo)}`)  
 
-        var version:GitVersionDescriptor = {
-            version: branch,
-            versionType:  GitVersionType.Branch ,
-            versionOptions: GitVersionOptions.None
+        
+        var version:GitVersionDescriptor| undefined
+
+        if(branch !== undefined){
+            version = {
+                version: branch,
+                versionType:  GitVersionType.Branch ,
+                versionOptions: GitVersionOptions.None
+            }
+        }
+
+        if(tag !== undefined){
+            version = {
+                version: tag,
+                versionType:  GitVersionType.Tag ,
+                versionOptions: GitVersionOptions.None
+            }
         }
         
         var tprops = {
