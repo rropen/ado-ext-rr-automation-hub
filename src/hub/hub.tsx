@@ -211,10 +211,7 @@ class Hub extends React.Component<{}, IHubStateProps> {
                         
                 }});
                 Logger.debug(`schemaOut ${JSON.stringify(schema)}`);
-                
-                //schema = JSON.parse(schemaRaw)
-            }
-              catch(err) {
+            } catch(err) {
                 LogError(err)
                 throw err;
             }
@@ -243,23 +240,17 @@ class Hub extends React.Component<{}, IHubStateProps> {
                 secrets[newKey] = nval
             }
         }
-
         return secrets
     }
 
 
     private submit(props:any){
         this.setState({loading:true});
-
         Logger.debug("Data submitted: ",  JSON.stringify(props.formData));
         Logger.debug("State: ",  JSON.stringify(this.state));
         Logger.debug("Selected Build: ",  JSON.stringify(this.state.selectedBuildID!));
-
-        //formData.formData = {}
         var params = Flat.flatten(props.formData,"");
-
         var secrets = this.getSecrets()
-        
         ADOAPI.queueBuild(this.state.selectedBuildID!,params,secrets,this.state.settings.projectName,this.state.settings.branchName, this.state.settings.tagName).then( (url:string | undefined) => {
             // throw({message:"ERRROR!"})
             this.setState({submitted:true, submittedBuildUrl:url, loading:false});
