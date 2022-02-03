@@ -58,9 +58,6 @@ export const loadingItem: IListBoxItem = {
 
 export class PipelineSelect extends React.Component<PipelineSelectProps,PipelineSelectPropsState> {
     private loading = new ObservableValue<boolean>(false);
-    // private items = new ObservableValue<ArrayItemProvider<IListBoxItem>>(
-    //     new ArrayItemProvider([])
-    // )
 
     constructor(props: PipelineSelectProps) {
         super(props);
@@ -71,12 +68,6 @@ export class PipelineSelect extends React.Component<PipelineSelectProps,Pipeline
     }
     
     render(): JSX.Element { 
-        
-        
-        // this.items.value = new ArrayItemProvider(
-        //     [...this.props.pipelineIDNames.value.value, this.loadingItem]
-        // );
-
         return (
             <div>
                 {this.state.showHelpPanel && (
@@ -115,7 +106,6 @@ export class PipelineSelect extends React.Component<PipelineSelectProps,Pipeline
                     <HeaderCommandBar items={getCommandBar( this.props.showSettings, () => {this.setState({showHelpPanel:true})} )}/>
                 </CustomHeader>
                 </div>
-                
         )
     }
 }

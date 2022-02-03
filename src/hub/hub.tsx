@@ -25,6 +25,7 @@ import * as LoadFormData from "./load-form-data"
 import * as Flat from "./flatten"
 import {SettingsPanel, ISettings} from "./settings-panel"
 import {LogError, Logger} from "./logger"
+import {urlStringSchema} from "./demo-schema"
 
 
 interface IHubStateProps {
@@ -77,9 +78,21 @@ class Hub extends React.Component<{}, IHubStateProps> {
     }  
     
     componentDidMount() {
+        /// testing
+        if(true){
+            let schema = JSON.parse(urlStringSchema)
+            let uiSchema = {}
+            LoadFormData.loadForm(schema, uiSchema).then(value => {
+                Logger.debug(`schema ${JSON.stringify(schema)}`)
+                Logger.debug(`UIschema ${JSON.stringify(uiSchema)}`)
+                this.setState({showPipelineForm:true, formData:value!, schema:schema, uiSchema:uiSchema, loading:false})
+                })
+        }
+        
         SDK.init(
             {loaded: false}
         ).then(async() => {
+
             try {
                 var loadedSettings:ISettings = await ADOAPI.loadSettings()
                 this.setState({settings:loadedSettings})
@@ -107,6 +120,9 @@ class Hub extends React.Component<{}, IHubStateProps> {
             // this.setState({projectNames : Array.from(tp!, x => x.name!)});
             Logger.debug("SDK init finished")
             SDK.notifyLoadSucceeded();
+            
+
+
         })
     }
 
@@ -182,6 +198,8 @@ class Hub extends React.Component<{}, IHubStateProps> {
             </Page>
         )
     }
+
+    
 
     private onSelectBuildDefinition = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>) => {
         Logger.debug(`Selected Build ID: ${item.id} Text: ${item.text}`)

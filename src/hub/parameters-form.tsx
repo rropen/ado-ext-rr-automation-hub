@@ -7,7 +7,7 @@ import {Form, Widgets} from "@rjsf/bootstrap-4";
 
 import { JSONSchema7} from 'json-schema';
 
-import {widgets} from "./form-widgets"
+import {widgets,fields} from "./form-widgets"
 
 export interface ParametersFormProps {
     onSubmit: (props:any)  => any
@@ -15,8 +15,6 @@ export interface ParametersFormProps {
     uiSchema: {},
     formData : {}
 }
-
-
 
 export class ParametersForm extends React.Component<ParametersFormProps, {}> {
 
@@ -32,6 +30,9 @@ export class ParametersForm extends React.Component<ParametersFormProps, {}> {
             <Card>
                 <Form onSubmit={this.props.onSubmit} schema={this.props.schema}
                     uiSchema={this.props.uiSchema} widgets={widgets} 
+                    fields = {fields} 
+                    // FieldTemplate={CustomFieldTemplate}
+                    // ObjectFieldTemplate={ObjectFieldTemplate}
                     className="flex-grow" formData={this.props.formData}
                     />
             </Card>

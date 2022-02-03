@@ -32,10 +32,10 @@ export class IdentityPickerHook extends React.Component<IdentityPickerHookProps>
 
     constructor(props: IdentityPickerHookProps) {
         super(props);
-        Logger.debug(`props ${JSON.stringify(props)}`)
-        Logger.debug(`useCurrentUser ${JSON.stringify(props.useCurrentUser)}`)
+        // Logger.debug(`props ${JSON.stringify(props)}`)
+        // Logger.debug(`useCurrentUser ${JSON.stringify(props.useCurrentUser)}`)
         if(props.useCurrentUser){
-            Logger.debug("creating identity picker with current user")
+            // Logger.debug("creating identity picker with current user")
             ADOAPI.getCurrentIdentityUser().then( (value) => {
                 this.onChange(value!)
             })

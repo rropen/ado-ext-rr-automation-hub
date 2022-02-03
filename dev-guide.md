@@ -57,7 +57,7 @@ Overview:
 ### BUGS
 
 - Switching project in settings doesn't reset the dropdown to include 'Select Automation'. Might be a problem with React's render of the dropdown or the ADO component as the 'Select Automation' disappears when an option is selected. 
-
+- Double clicking checkboxs quickly - might be logging/render callbacks
 
 # Design 
 
