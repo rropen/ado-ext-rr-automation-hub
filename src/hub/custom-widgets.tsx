@@ -26,12 +26,18 @@ export class IdentityPickerHook extends React.Component<IdentityPickerHookProps>
     static defaultProps = {
         useCurrentUser: false
     }
+    disabled:boolean = false
     private pickerProvider = new PeoplePickerProvider();
     private selectedIdentity = new ObservableValue<IIdentity | undefined>(undefined);
     // private adoAPI:AdoApi = new AdoApi({});
 
     constructor(props: IdentityPickerHookProps) {
         super(props);
+        if(props.formProps.disabled || props.formProps.readonly){
+            Logger.debug(`setting disabled true`)
+            this.disabled = true
+        }
+
         // Logger.debug(`props ${JSON.stringify(props)}`)
         // Logger.debug(`useCurrentUser ${JSON.stringify(props.useCurrentUser)}`)
         if(props.useCurrentUser){
@@ -43,14 +49,16 @@ export class IdentityPickerHook extends React.Component<IdentityPickerHookProps>
     }
 
         public render() {
+            
         return (
             <div>
             <label className="form-label">{this.props.formProps.schema.title}</label>
-            <div className="identity-picker-container">
+            <div className="identity-picker-container" style={this.disabled ? {pointerEvents:'none'}: {}}>
             <IdentityPickerDropdown
                 onChange={this.onChange}
                 pickerProvider={this.pickerProvider}
                 value={this.selectedIdentity}
+                disabled={this.disabled}
             />
             </div>
             </div>
@@ -82,12 +90,17 @@ export class IdentitiesPickerHook extends React.Component<IdentityPickerHookProp
         useCurrentUser: false
     }
 
+    disabled:boolean = false
     private pickerProvider = new PeoplePickerProvider();
     private selectedIdentities = new ObservableArray<IIdentity>([]);
     // private adoAPI:AdoApi = new AdoApi({});
 
     constructor(props: IdentityPickerHookProps) {
         super(props);
+        if(props.formProps.disabled || props.formProps.readonly){
+            Logger.debug(`setting disabled true`)
+            this.disabled = true
+        }
         Logger.debug(`props ${JSON.stringify(props)}`)
         Logger.debug(`useCurrentUser ${JSON.stringify(props.useCurrentUser)}`)
         if(props.useCurrentUser){
@@ -102,15 +115,18 @@ export class IdentitiesPickerHook extends React.Component<IdentityPickerHookProp
         return (
             <div>
             <label className="form-label">{this.props.formProps.schema.title}</label>
-            <div className="identity-picker-container">
+            <div className="identity-picker-container" style={this.disabled ? {pointerEvents:'none'}: {}}>
+
+            {this.disabled}    
             <IdentityPicker             
                 onIdentitiesRemoved={this.onIdentitiesRemoved}
                 onIdentityAdded={this.onIdentityAdded}
                 onIdentityRemoved={this.onIdentityRemoved}
                 pickerProvider={this.pickerProvider}
                 selectedIdentities={this.selectedIdentities}
-                
+                // disabled={this.disabled}
             />
+            
             </div>
             </div>
         ) 

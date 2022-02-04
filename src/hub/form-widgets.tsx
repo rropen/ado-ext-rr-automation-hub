@@ -2,18 +2,14 @@
 
 import * as React from "react";
 import {Widgets, Fields } from "@rjsf/bootstrap-4";
-import { WidgetProps, utils } from "@rjsf/core";
-
-
+import { FieldProps, WidgetProps, utils   } from "@rjsf/core";
+import Linkify from 'linkify-react';
 
 import {
     IdentitiesPickerHook, 
     IdentityPickerHook
 } from "./custom-widgets"
 import {Logger} from "./logger"
-import { Field, FieldProps, Widget  } from "@rjsf/core";
-
-import Linkify from 'linkify-react';
 
 const IdentityWidget = (props:any) => {
     Logger.debug(`IdentityWidget props: ${JSON.stringify(props.value)}`)
@@ -43,6 +39,24 @@ const CurrentIdentitiesWidget = (props:any) => {
     );
 };
 
+const linkOptions={
+  className : "text-primary",
+  attributes: {
+    target:  "_blank"
+  },
+  format: {
+    // url: (value:any) => value.length > 50 ? value.slice(0, 50) + '…' : value
+    url: (value:any) => "Link"
+  }
+}
+
+/**
+ * Not great but rjsf doesn't provide the hooks to override some of the widgets/fields to Linkify the labels
+ * 
+ * This one causes strange recursion errors... so is not used
+ * @param props props normally passed to the StringField
+ * @returns 
+ */
 const LinkifiedStringField = (props:any) => {
   const {
     schema,
@@ -72,13 +86,14 @@ const LinkifiedStringField = (props:any) => {
     let w:any  = widget
     let p:any = placeholder
     const Widget = utils.getWidget(schema!, w, widgets);
+    var newlabel = <Linkify options={linkOptions}>{title === undefined ? name : title}</Linkify>
     return (
-      <Widget
+      <Widget 
         options={{ ...options, enumOptions }}
         schema={schema}
         uiSchema={uiSchema}
         id={idSchema && idSchema.$id}
-        label={<Linkify options={linkOptions}>{title === undefined ? name : title}</Linkify>}
+        label={newlabel}
         value={formData}
         onChange={onChange}
         onBlur={onBlur}
@@ -93,8 +108,14 @@ const LinkifiedStringField = (props:any) => {
         rawErrors={rawErrors}
       />
     );
-  }
+}
 
+  /**
+ * Not great but rjsf doesn't provide the hooks to override some of the widgets/fields to Linkify the labels
+ * 
+ * @param props props normally passed to the TitleField
+ * @returns TitleField with label linkified
+ */
 const LinkifiedTitleField = ({ title, uiSchema }: Partial<FieldProps>) => (
     <>
       <div className="my-1">
@@ -102,56 +123,34 @@ const LinkifiedTitleField = ({ title, uiSchema }: Partial<FieldProps>) => (
         <hr className="border-0 bg-secondary" style={{ height: "1px" }} />
       </div>
     </>
-  );
+);
 
+/**
+ * Not great but rjsf doesn't provide the hooks to override some of the widgets/fields to Linkify the labels
+ * 
+ * @param props props normally passed to the CheckBox 
+ * @returns CheckboxWidget with label linkified
+ */
 const LinkifiedCheckBox =  (props: WidgetProps) => {
     const {
-      id,
-      value,
-      required,
-      disabled,
-      readonly,
       label,
-      schema,
-      autofocus,
-      onChange,
-      onBlur,
-      onFocus,
     } = props;
 
     var newlabel = <Linkify options={linkOptions} >{label}</Linkify>
-    
     return ( 
         <Widgets.CheckboxWidget {...{...props, label:newlabel}}></Widgets.CheckboxWidget>
     )
 }
 
-const linkOptions={
-  className : "text-primary",
-  attributes: {
-    target:  "_blank"
-  }
-}
-
+/**
+ * Not great but rjsf doesn't provide the hooks to override some of the widgets/fields to Linkify the labels
+ * 
+ * @param props props normally passed to the TextWidget 
+ * @returns TextWidget with label linkified
+ */
 const LinkifiedTextWidget = (props:WidgetProps) => {
   const {
-    id,
-    placeholder,
-    required,
-    readonly,
-    disabled,
-    type,
     label,
-    value,
-    onChange,
-    onBlur,
-    onFocus,
-    autofocus,
-    options,
-    schema,
-    rawErrors = [],
-    uiSchema,
-
 } = props;
 
   var newlabel = <Linkify options={linkOptions}>{label}</Linkify>
@@ -179,7 +178,7 @@ export const fields = {
 }
 
 
-// crazyness below... 
+// crazyness below trying to hollistically linkify everything..
 
 
 // const CustomTitleField = ({title, required}:FieldProps): JSX.Element => {
