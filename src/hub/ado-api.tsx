@@ -136,8 +136,6 @@ export const deleteAllSettings = async () => {
         scopeType: "User"
     }
     var currentDocs = await dm.getDocuments(getDocCollection(),opt)
-
-
 }
 
 export const loadSettings = async ():Promise<ISettings> =>
@@ -304,6 +302,7 @@ export const getCurrentIdentityUser = async () : Promise< IIdentity | undefined>
     try{
         var identityService = SDK.getService(IdentityServiceIds["IdentityService"]);
         var currentUser = await getClient(GraphRestClient).getUser(SDK.getUser().descriptor);
+        
         Logger.debug(`Current User: ${JSON.stringify(currentUser)}`)
 
         var searchRequest = { 
@@ -409,7 +408,6 @@ export const getSchemaFilesFromBuild = async (buildDefID: number,
                 }
             }
         }
-
         return [schemaString,UIschemaString]      
 
     } catch (e) {

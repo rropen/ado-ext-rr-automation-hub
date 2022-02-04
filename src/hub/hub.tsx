@@ -79,7 +79,7 @@ class Hub extends React.Component<{}, IHubStateProps> {
     
     componentDidMount() {
         /// testing
-        if(true){
+        if(false){
             let schema = JSON.parse(urlStringSchema)
             let uiSchema = {}
             LoadFormData.loadForm(schema, uiSchema).then(value => {
