@@ -1,5 +1,4 @@
 import { IHeaderCommandBarItem } from "azure-devops-ui/HeaderCommandBar";
-import { MenuItemType } from "azure-devops-ui/Menu";
 
 export const getCommandBar = (onActivate:()=>any, onHelp:()=>any) : IHeaderCommandBarItem[] => {
 

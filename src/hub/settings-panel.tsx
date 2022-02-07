@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Panel } from "azure-devops-ui/Panel";
-import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Dropdown } from "azure-devops-ui/Dropdown";
 import { FormItem } from "azure-devops-ui/FormItem";
 import { TextField, TextFieldWidth } from "azure-devops-ui/TextField";

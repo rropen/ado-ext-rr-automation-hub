@@ -1,9 +1,7 @@
 import * as React from "react";
-import { Button } from "azure-devops-ui/Button";
 import { Dialog } from "azure-devops-ui/Dialog";
 import { Observer } from "azure-devops-ui/Observer";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
-import { Link } from "azure-devops-ui/Link";
 import { Status, Statuses, StatusSize } from "azure-devops-ui/Status";
 
 export interface ErrorDialogProps {
@@ -11,7 +9,6 @@ export interface ErrorDialogProps {
     errorMsg:string,
     onClose: () => any
 }
-
 
 export class ErrorDialog extends React.Component<ErrorDialogProps> {
     private isDialogOpen = new ObservableValue<boolean>(true);

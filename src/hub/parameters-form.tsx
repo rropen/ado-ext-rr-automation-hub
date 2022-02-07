@@ -1,12 +1,7 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
-
 import { Card } from "azure-devops-ui/Card";
-
 import {Form, Widgets} from "@rjsf/bootstrap-4";
-
 import { JSONSchema7} from 'json-schema';
-
 import {widgets,fields} from "./form-widgets"
 
 export interface ParametersFormProps {

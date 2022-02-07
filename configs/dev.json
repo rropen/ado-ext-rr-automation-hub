@@ -1,5 +1,5 @@
 {
-  "id": "rr-automation-hub-test-dev",
+  "id": "rr-self-service-hub-dev",
   "public": false,
   "baseUri": "https://localhost:3000"
 }

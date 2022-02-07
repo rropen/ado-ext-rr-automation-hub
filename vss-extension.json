@@ -1,10 +1,10 @@
 {
   "manifestVersion": 1,
-  "version": "1.0.4",
+  "version": "0.0.2",
   "name": "Self Service Hub",
-  "id": "rr-automation-hub-test",
+  "id": "rr-self-service-hub",
   "description": "Hub for simplifying and abstracting automation from pipelines",
-  "publisher": "MarcRobinsonTest",
+  "publisher": "Rolls-Royce",
   "public": false,
   "demands": ["api-version/3.0"],
   "categories": ["Azure Repos"],

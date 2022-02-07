@@ -1,10 +1,8 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 
 import { Dropdown } from "azure-devops-ui/Dropdown";
 import { IListBoxItem,LoadingCell,ListBoxItemType  } from "azure-devops-ui/ListBox";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
-import { GroupedItemProvider } from "azure-devops-ui/Utilities/GroupedItemProvider";
 import { ITableColumn } from "azure-devops-ui/Table";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Observer } from "azure-devops-ui/Observer";
@@ -16,8 +14,6 @@ import {
     TitleSize
 } from "azure-devops-ui/Header";
 import { HeaderCommandBar } from "azure-devops-ui/HeaderCommandBar";
-import { TextField } from "azure-devops-ui/TextField";
-import { Button } from "azure-devops-ui/Button";
 import { Panel } from "azure-devops-ui/Panel";
 
 import { getCommandBar } from "./header-data";

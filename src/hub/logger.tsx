@@ -1,9 +1,7 @@
 import {ROARR, Roarr, logLevels,getLogLevelName} from 'roarr';
 import {serializeError} from 'serialize-error';
 
-
 var LOGLEVEL = logLevels.debug
-
 
 ROARR.write = (message) => {
   const payload = JSON.parse(message);

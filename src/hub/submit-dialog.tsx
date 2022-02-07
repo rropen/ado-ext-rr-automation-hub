@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Button } from "azure-devops-ui/Button";
 import { Dialog } from "azure-devops-ui/Dialog";
 import { Observer } from "azure-devops-ui/Observer";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
@@ -11,8 +10,6 @@ export interface SubmitDialogProps {
     buildUrl:string
     onClose: () => any
 }
-
-
 
 export class SubmitDialog extends React.Component<SubmitDialogProps> {
     private isDialogOpen = new ObservableValue<boolean>(true);

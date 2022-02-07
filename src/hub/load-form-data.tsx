@@ -27,6 +27,7 @@ export const getWidgetMetaMapping = (user: GraphUser | undefined, widgetname:str
         case "currentUserName":
             return user!.displayName
         case "currentUserEmail":
+            
             return user!.mailAddress
         default:
             throw Error(`Could not find mapping for widget ${widgetname}`)
@@ -41,23 +42,6 @@ export const getWidgetMetaMapping = (user: GraphUser | undefined, widgetname:str
  */
 export const loadForm = async (schema:JSONSchema7, uiSchema:any=undefined) => {     
     var formData = {}
-
-    // await ADOAPI.getCurrentUser().then(currentUser => { 
-    //     updateIdentitiesIntoFormData(uiSchema,formData, currentUser!)
-    //     }).then(value => ADOAPI.getProjects())
-    //         .then(projects => { 
-    //             Logger.debug(`loaded projects: ${JSON.stringify(projects!)}`) 
-    //             updateProjectsIntoSchema(projects!,uiSchema, schema)
-    //             })
-    //             .then(value => ADOAPI.getCurrentProject())
-    //                 .then(currentProject => { 
-    //                     Logger.debug(`loaded current project: ${JSON.stringify(currentProject!)}`) 
-    //                     updateCurrentProjectIntoFormData(currentProject!,uiSchema, formData!)
-    //                     })
-    //                     .finally( () => {
-    //                             // this.setState({showADOLoadedWidgets:true});
-    //                             Logger.debug(`formData: ${JSON.stringify(formData!)}`)
-    //                         })
 
     try{
         var currentUser = await ADOAPI.getCurrentUser()
