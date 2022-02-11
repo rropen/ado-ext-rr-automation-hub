@@ -87,7 +87,13 @@ const settingsExist = async ():Promise<boolean> => {
     var settingsExist:boolean = false
 
     // var currentCollections:ExtensionDataCollection[] = await dm.queryCollectionsByName([getDocCollection()])
+    try{
     var currentDocs = await dm.getDocuments(getDocCollection(),opt)
+    } catch (e) {
+        LogError(e)
+        return settingsExist
+    } 
+
     currentDocs.forEach(element => {
         if (element.id === getDocID()) settingsExist=true
     })
@@ -153,12 +159,46 @@ export const loadSettings = async ():Promise<ISettings> =>
             Logger.debug(`loaded setting from collection ${getDocCollection()} ${JSON.stringify(set)}`)
             return set  
         } 
+        
+        Logger.debug(`did not find saved settings, trying central repo`)
+        try{
+            var set:ISettings = await loadSettingsFromRepo()
+            return set 
+        } catch (e) {
+            LogError(e)
+        }    
         Logger.debug(`could not load settings, using defaults`)
         return getSettingsDefaults()
     } catch (e) {
         LogError(e)
         throw(e)
     }    
+}
+
+/**
+ * Loading settings from a central repo called `ado-ext-rr-automation-hub-settings` in the current project
+ * that contains a `settings.json` file.
+ * @returns 
+ */
+export const loadSettingsFromRepo = async ():Promise<ISettings> =>
+{
+
+    try{
+        // get defaults from central repo. 
+        Logger.debug("loading settings from central repo")
+        var project = await getCurrentProject()
+        Logger.debug(`loading settings from central repo - project ${project!.name}`)
+        var contents = await getFileContentsFromRepo("ado-ext-rr-automation-hub-settings",project!.name,["settings.json"] )
+        
+        let defs:ISettings = JSON.parse(contents![0])
+        Logger.debug(`settings found in central repo: ${JSON.stringify(defs)}`)
+        return defs 
+        }
+    catch (e) {
+        Logger.warn("could not load settings from central repo ado-ext-rr-automation-hub-settings")
+        LogError(e)
+        throw(e)
+    }
 }
 
 /**
@@ -330,6 +370,60 @@ export const getCurrentIdentityUser = async () : Promise< IIdentity | undefined>
     }
 }  
 
+export const getFileContentsFromRepo = async (  repoId: string,
+                                                project:string, 
+                                                fileNames:string[],
+                                                branch?:string |undefined, 
+                                                tag?:string|undefined ): Promise<string[] | undefined> =>
+{
+    try
+    {
+        var gitClient:GitRestClient = getClient(GitRestClient);
+        var repo:GitRepository
+        repo = await gitClient.getRepository(repoId,project)
+        Logger.debug(`git repository for build: ${JSON.stringify(repo)}`)  
+
+        
+        var version:GitVersionDescriptor| undefined
+
+        if(branch !== undefined){
+            version = {
+                version: branch,
+                versionType:  GitVersionType.Branch ,
+                versionOptions: GitVersionOptions.None
+            }
+        }
+                
+        if(tag !== undefined){
+            version = {
+                version: tag,
+                versionType:  GitVersionType.Tag ,
+                versionOptions: GitVersionOptions.None
+            }
+        }
+        
+        var contentOut:any = []
+        for (const fname of fileNames){
+            var tprops = {
+                repositoryId:repo.id,
+                path:fname,            
+                versionDescriptor:version
+            }
+    
+            var content:ArrayBuffer = await gitClient.getItemContent(tprops.repositoryId,tprops.path,project,"",VersionControlRecursionType.None,false,false,false,tprops.versionDescriptor)
+            var contentString:string = new TextDecoder().decode(content) 
+            Logger.debug(`push content out: ${JSON.stringify(contentString)}`)  
+            contentOut.push(contentString)
+        }
+        
+        Logger.debug(`content out: ${JSON.stringify(contentOut)}`)    
+        return contentOut
+    } catch (e) {
+        LogError(e)
+        throw(e)
+    }
+}
+
 /**
  * Get schemas from build. Gets repo from build, then get json files from repos
  * */
@@ -338,7 +432,7 @@ export const getSchemaFilesFromBuild = async (buildDefID: number,
                                               schemaFileName:string,
                                               uiSchemaFileName:string,
                                               branch?:string |undefined, 
-                                              tag?:string|undefined ): Promise<[string,string] | undefined> =>
+                                              tag?:string|undefined ): Promise<string[] | undefined> =>
 { 
     try{
 
@@ -354,61 +448,63 @@ export const getSchemaFilesFromBuild = async (buildDefID: number,
         var build:BuildDefinition
         build = await getClient(BuildRestClient).getDefinition(project,buildDefID)
         Logger.debug(`repository for build: ${JSON.stringify(buildDefID)} ${JSON.stringify(build.repository)}`)  
+
+        return getFileContentsFromRepo(build.repository.id,project,[schemaFileName,uiSchemaFileName], branch, tag)
         
-        var gitClient:GitRestClient = getClient(GitRestClient);
-        var repo:GitRepository
-        repo = await gitClient.getRepository(build.repository.id)
-        Logger.debug(`git repository for build: ${JSON.stringify(repo)}`)  
+        // var gitClient:GitRestClient = getClient(GitRestClient);
+        // var repo:GitRepository
+        // repo = await gitClient.getRepository(build.repository.id)
+        // Logger.debug(`git repository for build: ${JSON.stringify(repo)}`)  
 
         
-        var version:GitVersionDescriptor| undefined
+        // var version:GitVersionDescriptor| undefined
 
-        if(branch !== undefined){
-            version = {
-                version: branch,
-                versionType:  GitVersionType.Branch ,
-                versionOptions: GitVersionOptions.None
-            }
-        }
+        // if(branch !== undefined){
+        //     version = {
+        //         version: branch,
+        //         versionType:  GitVersionType.Branch ,
+        //         versionOptions: GitVersionOptions.None
+        //     }
+        // }
 
-        if(tag !== undefined){
-            version = {
-                version: tag,
-                versionType:  GitVersionType.Tag ,
-                versionOptions: GitVersionOptions.None
-            }
-        }
+        // if(tag !== undefined){
+        //     version = {
+        //         version: tag,
+        //         versionType:  GitVersionType.Tag ,
+        //         versionOptions: GitVersionOptions.None
+        //     }
+        // }
         
-        var tprops = {
-            repositoryId:repo.id,
-            path:schemaFileName,
-            versionDescriptor:version
-        }
+        // var tprops = {
+        //     repositoryId:repo.id,
+        //     path:schemaFileName,
+        //     versionDescriptor:version
+        // }
 
-        var content:ArrayBuffer = await gitClient.getItemContent(tprops.repositoryId,tprops.path,project,"",VersionControlRecursionType.None,false,false,false,tprops.versionDescriptor)
-        var schemaString:string = new TextDecoder().decode(content)
-        Logger.debug(`content: ${JSON.stringify(schemaString)}`)  
+        // var content:ArrayBuffer = await gitClient.getItemContent(tprops.repositoryId,tprops.path,project,"",VersionControlRecursionType.None,false,false,false,tprops.versionDescriptor)
+        // var schemaString:string = new TextDecoder().decode(content)
+        // Logger.debug(`content: ${JSON.stringify(schemaString)}`)  
 
-        var tprops = {
-            repositoryId:repo.id,
-            path:uiSchemaFileName,
-            versionDescriptor:version
-        }
+        // var tprops = {
+        //     repositoryId:repo.id,
+        //     path:uiSchemaFileName,
+        //     versionDescriptor:version
+        // }
 
-        var UIschemaString:string = "{}"
-        try{
-        var content:ArrayBuffer = await gitClient.getItemContent(tprops.repositoryId,tprops.path,project,"",VersionControlRecursionType.None,false,false,false,tprops.versionDescriptor)
-        UIschemaString = new TextDecoder().decode(content)
-        Logger.debug(`content: ${JSON.stringify(UIschemaString)}`)  
-        } catch ( e ) {
-            if (e instanceof Error){ 
-                if (!e.message.includes("could not be found in the repository"))
-                {
-                    throw e
-                }
-            }
-        }
-        return [schemaString,UIschemaString]      
+        // var UIschemaString:string = "{}"
+        // try{
+        // var content:ArrayBuffer = await gitClient.getItemContent(tprops.repositoryId,tprops.path,project,"",VersionControlRecursionType.None,false,false,false,tprops.versionDescriptor)
+        // UIschemaString = new TextDecoder().decode(content)
+        // Logger.debug(`content: ${JSON.stringify(UIschemaString)}`)  
+        // } catch ( e ) {
+        //     if (e instanceof Error){ 
+        //         if (!e.message.includes("could not be found in the repository"))
+        //         {
+        //             throw e
+        //         }
+        //     }
+        // }
+        // return [schemaString,UIschemaString]      
 
     } catch (e) {
         LogError(e)

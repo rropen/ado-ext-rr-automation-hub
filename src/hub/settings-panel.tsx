@@ -4,7 +4,9 @@ import { Dropdown } from "azure-devops-ui/Dropdown";
 import { FormItem } from "azure-devops-ui/FormItem";
 import { TextField, TextFieldWidth } from "azure-devops-ui/TextField";
 import { DropdownSelection } from "azure-devops-ui/Utilities/DropdownSelection";
-import {Logger, LogError} from "./logger"
+
+import * as ADOAPI from "./ado-api";
+import {Logger, LogError} from "./logger";
 
 export interface IPanelExampleState {
     expanded: boolean
@@ -28,7 +30,7 @@ export interface IPanelExampleProps {
     onSave: (settings: ISettings) => void
 }
 
-export const getSettingsDefaults = () :ISettings => {
+export const getSettingsDefaults = async () : Promise<ISettings> => {
 
     var defs: ISettings ={
         projectName: "", 
@@ -38,13 +40,6 @@ export const getSettingsDefaults = () :ISettings => {
         branchName: "main",
         tagName: undefined,
         id: "settings"
-    }
-
-    try{
-        // get defaults from central repo. 
-    }
-    catch (e) {
-        LogError(e)
     }
     return defs
 }

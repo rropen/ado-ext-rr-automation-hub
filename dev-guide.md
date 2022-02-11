@@ -46,14 +46,13 @@ Overview:
 
 ## TODO
 
-- Deafult settings in a central Git repo, at least defaults 
 - Copy vars from previous run 
-- No Personal Data (make this explicit)
 
 ## DONE
 
-- Change name to 'Self-Service Hub' ? - DONE
-- Use pipeline folders to define automation, add folder to settings - DONE
+- Deafult settings in a central Git repo, at least defaults 
+- Change name to 'Self-Service Hub' ? 
+- Use pipeline folders to define automation, add folder to settings
 - Extension default settings stored somewhere? and settable by admins only - Done set as user context 'extension docs'
 
 ### BUGS

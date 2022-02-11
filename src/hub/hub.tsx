@@ -211,7 +211,7 @@ class Hub extends React.Component<{}, IHubStateProps> {
                                        this.state.settings.schemaFileName,
                                        this.state.settings.uiSchemaFileName,
                                        this.state.settings.branchName,
-                                       this.state.settings.tagName).then( async (value:[string,string] | undefined) =>{
+                                       this.state.settings.tagName).then( async (value:string[] | undefined) =>{
             var schemaRaw:JSONSchema7 = JSON.parse(value![0])
             var schema:any                                
             try {
