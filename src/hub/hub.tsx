@@ -268,6 +268,7 @@ class Hub extends React.Component<{}, IHubStateProps> {
         Logger.debug("State: ",  JSON.stringify(this.state));
         Logger.debug("Selected Build: ",  JSON.stringify(this.state.selectedBuildID!));
         var params = Flat.flatten(props.formData,"");
+        params["variables_json"] = JSON.stringify(props.formData!)
         var secrets = this.getSecrets()
         ADOAPI.queueBuild(this.state.selectedBuildID!,params,secrets,this.state.settings.projectName,this.state.settings.branchName, this.state.settings.tagName).then( (url:string | undefined) => {
             // throw({message:"ERRROR!"})
