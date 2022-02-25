@@ -285,13 +285,8 @@ class Hub extends React.Component<{}, IHubStateProps> {
         Logger.debug(`State:  ${JSON.stringify(this.state)}`);
         Logger.debug(`Selected Build: ${JSON.stringify(this.state.selectedBuildID!)}`);
         var params = Flat.flatten(props.formData,"");
-        // can't do this, if we have secret vars. 
-        // params["variables_json"] = JSON.stringify(props.formData!)
-
         var secrets = this.getSecrets()
-
         var formDataWithoutSecrets = this.removeSecretsFromFromData(params, secrets)
-
         params["variables_json"] = JSON.stringify(formDataWithoutSecrets)
         Logger.debug(`Variables JSON: ${params["variables_json"] }`);
         ADOAPI.queueBuild(this.state.selectedBuildID!,params,secrets,this.state.settings.projectName,this.state.settings.branchName, this.state.settings.tagName).then( (url:string | undefined) => {
