@@ -2,6 +2,8 @@ import "./hub.scss";
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+
+import * as LD from "lodash";
 //SDK
 import * as SDK from "azure-devops-extension-sdk";
 import { JSONSchema7} from 'json-schema';
@@ -264,16 +266,9 @@ class Hub extends React.Component<{}, IHubStateProps> {
 
     private removeSecretsFromFromData(flatParams:{[key:string]:any}, flatSecrets:{[key:string]:boolean}){
         let outFormData:{[key:string]:any} = {}
-
         for (const [key, val] of Object.entries(flatParams)) {
             if(!flatSecrets[key]){
-                // not a secret, so inflate the param
-                var fp = flatParams[key]
-                var current = outFormData
-                for (const element of key.split(".")){
-                    current[element] = fp
-                    current = current[element] 
-                }
+                LD.set(outFormData,key,flatParams[key])
             }
         }
         return outFormData
