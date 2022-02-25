@@ -16,7 +16,7 @@
  * @param {string} c key to pass per recursion
  * @returns {string}
  */
-export function flatten(data: any, c:string) {
+export function flatten(data: any, c:string) : any {
     var result:any = {}
     for(var i in data) {
       if(typeof data[i] == 'object') Object.assign(result, flatten(data[i], c + '.' + i))

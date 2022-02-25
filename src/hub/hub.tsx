@@ -262,14 +262,38 @@ class Hub extends React.Component<{}, IHubStateProps> {
     }
 
 
+    private removeSecretsFromFromData(flatParams:{[key:string]:any}, flatSecrets:{[key:string]:boolean}){
+        let outFormData:{[key:string]:any} = {}
+
+        for (const [key, val] of Object.entries(flatParams)) {
+            if(!flatSecrets[key]){
+                // not a secret, so inflate the param
+                var fp = flatParams[key]
+                var current = outFormData
+                for (const element of key.split(".")){
+                    current[element] = fp
+                    current = current[element] 
+                }
+            }
+        }
+        return outFormData
+    }
+
     private submit(props:any){
         this.setState({loading:true});
-        Logger.debug("Data submitted: ",  JSON.stringify(props.formData));
-        Logger.debug("State: ",  JSON.stringify(this.state));
-        Logger.debug("Selected Build: ",  JSON.stringify(this.state.selectedBuildID!));
+        Logger.debug(`Data submitted: ${JSON.stringify(props.formData)}`);
+        Logger.debug(`State:  ${JSON.stringify(this.state)}`);
+        Logger.debug(`Selected Build: ${JSON.stringify(this.state.selectedBuildID!)}`);
         var params = Flat.flatten(props.formData,"");
-        params["variables_json"] = JSON.stringify(props.formData!)
+        // can't do this, if we have secret vars. 
+        // params["variables_json"] = JSON.stringify(props.formData!)
+
         var secrets = this.getSecrets()
+
+        var formDataWithoutSecrets = this.removeSecretsFromFromData(params, secrets)
+
+        params["variables_json"] = JSON.stringify(formDataWithoutSecrets)
+        Logger.debug(`Variables JSON: ${params["variables_json"] }`);
         ADOAPI.queueBuild(this.state.selectedBuildID!,params,secrets,this.state.settings.projectName,this.state.settings.branchName, this.state.settings.tagName).then( (url:string | undefined) => {
             // throw({message:"ERRROR!"})
             this.setState({submitted:true, submittedBuildUrl:url, loading:false});
