@@ -14,7 +14,7 @@ import * as ADOAPI from "./ado-api";
 import {Logger} from "./logger"
 
 // field we use for filling in the form for a given identity
-const getIdentityField = (id:IIdentity) => `'${id.displayName}'`
+const getIdentityField = (id:IIdentity) => `'${id.subjectDescriptor}'`
 
 export interface IdentityPickerHookProps {
     formProps: any,

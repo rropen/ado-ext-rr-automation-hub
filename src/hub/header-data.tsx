@@ -8,7 +8,7 @@ export const getCommandBar = (onActivate:()=>any, onHelp:()=>any) : IHeaderComma
             iconName: "Settings"
         },
         id: "settings",
-        important: true,
+        important: false,
         onActivate: onActivate,
         text: "Settings"
     },
@@ -17,7 +17,7 @@ export const getCommandBar = (onActivate:()=>any, onHelp:()=>any) : IHeaderComma
             iconName: "Help"
         },
         id: "help",
-        important: true,
+        important: false,
         onActivate: onHelp,
         text: "Help"
     }

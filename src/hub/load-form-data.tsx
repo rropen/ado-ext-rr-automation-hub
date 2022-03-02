@@ -4,7 +4,11 @@ import {
     GraphUser
 } from "@byndit/azure-devops-extension-api/Graph";
 
-import { TeamProjectReference } from "azure-devops-node-api/interfaces/CoreInterfaces";
+// import { TeamProjectReference } from "azure-devops-node-api/interfaces/CoreInterfaces";
+import { TeamProjectReference } from "@byndit/azure-devops-extension-api/Core/Core";
+// import { TeamProjectReference } from "azure-devops-node-api/interfaces/CoreInterfaces";
+
+
 import {IProjectInfo } from "@byndit/azure-devops-extension-api/Common";
 
 import * as ADOAPI from "./ado-api";
@@ -68,6 +72,7 @@ export const loadForm = async (schema:JSONSchema7, uiSchema:any=undefined) => {
  */
 const updateIdentitiesIntoFormData = (uiSchema:{}, formData:any, currentUser:GraphUser) =>
 {
+    // switch to lodash
     // loop through widgets to see which are customWidgets to set formData before loading
     ["currentIdentityWidget","currentIdentitiesWidget","currentUserName", "currentUserEmail" ].forEach( element=> {
         const widgetKeys = recFind.findNestedObject(uiSchema!,"ui:widget",element)

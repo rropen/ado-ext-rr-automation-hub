@@ -87,3 +87,27 @@ Hub
 - https://github.com/rjsf-team/react-jsonschema-form
 - https://github.com/APIDevTools/json-schema-ref-parser
 - https://github.com/byndit/azure-devops-extension-api
+
+# 3rd Party/Open Source Libraries.
+
+## Licenses used (production)
+
+`license-checker --summary --production` :
+
+- MIT: 192
+- BSD-3-Clause: 9
+- BSD-2-Clause: 7
+- ISC: 6
+- Apache-2.0: 4
+- Python-2.0: 1
+- CC-BY-4.0: 1
+- W3C-20150513: 1
+- (MIT OR CC0-1.0): 1
+
+For a complete list, see `licenses.csv`
+
+## Vulnerabilities
+
+`npm audit --production` report:
+
+`found 0 vulnerabilities` as of 02/02/2022

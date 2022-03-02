@@ -40,7 +40,8 @@ module.exports = {
       https: require.resolve('https-browserify'),
       http: require.resolve("stream-http"),
       process: require.resolve('process/browser'),
-      buffer: require.resolve('buffer')
+      buffer: require.resolve('buffer'),
+      url: require.resolve('url') 
     }
   },
   stats: {

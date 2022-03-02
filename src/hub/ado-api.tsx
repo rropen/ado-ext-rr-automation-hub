@@ -38,7 +38,8 @@ import {
 } from "@byndit/azure-devops-extension-api/Pipelines";
 
 import { CommonServiceIds, IProjectPageService, IExtensionDataService, IExtensionDataManager, IDocumentOptions, ExtensionDataCollection} from "@byndit/azure-devops-extension-api";
-import { TeamProjectReference } from "azure-devops-node-api/interfaces/CoreInterfaces";
+import { TeamProjectReference } from "@byndit/azure-devops-extension-api/Core/Core";
+// import { TeamProjectReference } from "azure-devops-node-api/interfaces/CoreInterfaces";
 
 import {
     IVssIdentityService, IdentityServiceIds, IIdentity

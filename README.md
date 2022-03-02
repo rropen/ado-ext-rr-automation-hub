@@ -11,6 +11,6 @@ Extension adds a high level Hub page that:
 
 Please see [here](user-guide.md)
 
-# Dev and Architecture
+# Dev and Architecture (including Open Source/3rd party libraries)
 
 Please see [here](dev-guide.md)
