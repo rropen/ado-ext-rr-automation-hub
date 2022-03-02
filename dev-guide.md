@@ -29,6 +29,37 @@ Overview:
 
 ![Azure DevOps Architecture](arch.png)
 
+## Software Assurance 
+
+Elements of this solution that involved Rolls-Royce developed software have been developed in line with the [Software Assurance Process](https://rollsroyce.sharepoint.com/sites/engineroom/en-gb/engineering/pages/software-engineering.aspx). 
+
+## Software Risk Assessment
+
+The questions below derive from the [Rolls-Royce Software Risk Assessment](https://rollsroyce.sharepoint.com/:b:/r/sites/engineroom/en-gb/engineering/Documents/Software%20Engineering/Rolls-Royce%20Software%20Risk%20Assessment.pdf?csf=1&web=1&e=p1fYeg)
+
+- Does your software have a direct safety impact: No
+- Does your software have a business-critical impact: No
+- Is your software below the complexity/threat threshold: No
+
+Following the risk assessment flow diagram, this solution has been rated:  **LOW SAL**
+
+Given the rating above, the following steps have been taken following the [Rolls-Royce Software Standards](https://rollsroyce.sharepoint.com/:x:/r/sites/engineroom/en-gb/engineering/_layouts/15/Doc.aspx?sourcedoc=%7BD1AB3FCE-9261-4FA0-9C40-C42F9C5A8EC4%7D&file=Rolls-Royce%20Software%20Standards%20-%20Engine%20Room%20v1.2.xlsx&action=default&mobileredirect=true)
+
+| Step | Description| Action |
+|---|---|---| 
+| Planning | The risk associated with the use of the software and the commensurate level of software quality assurance (SAL) shall be documented, reviewed and approved. | See above for SAL level | 
+| Planning | Software quality management lifecycle and exceptions | All development will stem from a [DevOps](https://dev.azure.com/RRALM/Civil%20-%20IT%20and%20Digital%20-%20Standards%20and%20Compliance/_backlogs/backlog/Architects/Epics/?showParents=true) backlog requirement or bug. |
+| Requirements | The operational requirements (functional and non-functional) shall be defined and documented. | Captured in the associated DevOps backlog, and outlined in the `requirements.md` file |
+| Design | Information should be made available to aid understanding and maintenance of the solution. | The system design shall be fully documented using Markdown in the core repository.| 
+| Implementation and Build | Software source code shall be well formatted and commented for ease of understanding and maintenance.| The system shall follow JS/Typescript guidelines and carry associated docstrings. Markdown documentation will acompany the solution.
+| Testing & Checking | Software testing shall be performed at the software functional full system level to demonstrate the software requirements (high-level/operational requirements) are met. | The system shall have associated pre-prod manual testing in a test collection of DevOps |
+| Security | Cyber security risks shall be considered and, where necessary, managed. | Minimal risks surround this development. Risks will be captured below. The solution will utilise approved cloud infrastructure. Source code will be scanned using `npm audit` with open source vulnerabilities minimised, see  `Vulnerabilities` below. 
+
+
+## Risks 
+
+Minimal risks for this application. No sensitive RR data will be used, only pipeline variables. Secret variables are hidden, following the default Azure DevOps behaviour. 
+
 --- 
 
 # Development Docs 
