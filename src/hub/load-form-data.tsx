@@ -25,9 +25,9 @@ import {LogError, Logger} from "./logger"
 export const getWidgetMetaMapping = (user: GraphUser | undefined, widgetname:string ) :string => {
     switch(widgetname){
         case "currentIdentityWidget":
-            return user!.mailAddress
+            return user!.descriptor
         case "currentIdentitiesWidget":
-            return user!.mailAddress
+            return user!.descriptor
         case "currentUserName":
             return user!.displayName
         case "currentUserEmail":
