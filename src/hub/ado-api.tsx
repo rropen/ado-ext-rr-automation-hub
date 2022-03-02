@@ -137,12 +137,22 @@ export const saveSettings = async (settings:ISettings) => {
 }
 
 export const deleteAllSettings = async () => {
-    var dm:IExtensionDataManager = await getExtensionMgr()
-    var context:IExtensionContext = SDK.getExtensionContext()
-    var opt:IDocumentOptions = {
-        scopeType: "User"
+    var exists:boolean = await settingsExist()
+
+    if(exists){
+        var dm:IExtensionDataManager = await getExtensionMgr()
+        var context:IExtensionContext = SDK.getExtensionContext()
+        var opt:IDocumentOptions = {
+            scopeType: "User"
+        }
+        Logger.debug("deleting document ")
+        await dm.deleteDocument(getDocCollection(),getDocID(), opt)
     }
-    var currentDocs = await dm.getDocuments(getDocCollection(),opt)
+    var exists:boolean = await settingsExist()
+
+    if(exists){
+        throw Error("settings detected after reset")
+    }
 }
 
 export const loadSettings = async ():Promise<ISettings> =>

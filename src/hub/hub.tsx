@@ -137,7 +137,7 @@ class Hub extends React.Component<{}, IHubStateProps> {
         this.buildDefsItemProvider.value = new ArrayItemProvider(
             [loadingItem]
         );
-
+        Logger.debug(`getting build defs in project ${JSON.stringify(this.state.settings.projectName)} and folder ${JSON.stringify(this.state.settings.folder)}`)    
         ADOAPI.getBuildDefinitions(this.state.settings.projectName, this.state.settings.folder).then( (value) => { 
             //transform value to an object that confirms to IListboxItem, so can pass it back to the dropdown
             var buildDefsIDName = value!.map((a) => ({id: a.id.toString(), text: a.name}))
@@ -190,7 +190,15 @@ class Hub extends React.Component<{}, IHubStateProps> {
                             this.setState({settings:newSettings, showPipelineForm:false},this.loadBuildDefinitions)
                             ADOAPI.saveSettings(newSettings)
                             }  
-                        } 
+                        }
+                        onReset={async ()=>{
+                            Logger.debug(`Resetting settings`)
+                            await ADOAPI.deleteAllSettings()
+                            var loadedSettings:ISettings = await ADOAPI.loadSettings()
+                            Logger.debug(`loaded settings after reset ${JSON.stringify(loadedSettings)}`)
+                            this.setState({settings:loadedSettings})
+
+                        }} 
                         onDismiss={()=>this.setState({showSettingsPanel:false})}
                         />  
                      : null }         

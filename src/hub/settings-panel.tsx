@@ -28,6 +28,7 @@ export interface IPanelExampleProps {
     projectNames: string[]
     onDismiss: () => void 
     onSave: (settings: ISettings) => void
+    onReset: () => void
 }
 
 export const getSettingsDefaults = async () : Promise<ISettings> => {
@@ -79,7 +80,12 @@ export class SettingsPanel extends React.Component<IPanelExampleProps, IPanelExa
                         //     "Automation settings"
                         // }
                         footerButtonProps={[
-                            { text: "Cancel", onClick: this.dismiss },
+                            { text: "Close", onClick: this.dismiss },
+                            { text: "Reset",  onClick: async () =>{ 
+                                await this.props.onReset()
+                                this.setState({ settings: this.props.settings })
+                                } 
+                            },
                             { text: "Save", primary: true, onClick: () =>{ 
                                 this.dismiss()
                                 this.props.onSave(this.state.settings)
