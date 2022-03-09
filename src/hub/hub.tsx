@@ -26,7 +26,7 @@ import {ErrorDialog} from "./error-dialog"
 import * as LoadFormData from "./load-form-data"
 import * as Flat from "./flatten"
 import {SettingsPanel, ISettings} from "./settings-panel"
-import {LogError, Logger} from "./logger"
+import {LogError, Logger, setLogLevel} from "./logger"
 import {urlStringSchema, simpleSchema, simpleUiSchema} from "./demo-schema"
 
 
@@ -87,7 +87,7 @@ class Hub extends React.Component<{}, IHubStateProps> {
         ).then(async() => {
 
             /// testing
-            if(true){
+            if(false){
                 let schema = JSON.parse(simpleSchema) 
                 let uiSchema = JSON.parse(simpleUiSchema)
                 LoadFormData.loadForm(schema, uiSchema).then(value => {
@@ -100,6 +100,7 @@ class Hub extends React.Component<{}, IHubStateProps> {
             try {
                 var loadedSettings:ISettings = await ADOAPI.loadSettings()
                 this.setState({settings:loadedSettings})
+                
             } catch (e) {
                 Logger.debug("could not load settings")
                 LogError(e)
@@ -112,6 +113,7 @@ class Hub extends React.Component<{}, IHubStateProps> {
                 }
                 )  
             }
+            setLogLevel(this.state.settings.logLevel!)
 
             this.loadBuildDefinitions()
            
@@ -191,6 +193,7 @@ class Hub extends React.Component<{}, IHubStateProps> {
                             Logger.debug(`Saving ${JSON.stringify(newSettings)}`)
                             this.setState({settings:newSettings, showPipelineForm:false},this.loadBuildDefinitions)
                             ADOAPI.saveSettings(newSettings)
+                            setLogLevel(this.state.settings.logLevel!)
                             }  
                         }
                         onReset={async ()=>{
@@ -199,6 +202,7 @@ class Hub extends React.Component<{}, IHubStateProps> {
                             var loadedSettings:ISettings = await ADOAPI.loadSettings()
                             Logger.debug(`loaded settings after reset ${JSON.stringify(loadedSettings)}`)
                             this.setState({settings:loadedSettings})
+                            setLogLevel(this.state.settings.logLevel!)
 
                         }} 
                         onDismiss={()=>this.setState({showSettingsPanel:false})}

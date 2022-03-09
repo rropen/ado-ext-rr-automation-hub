@@ -1,6 +1,6 @@
 {
   "manifestVersion": 1,
-  "version": "0.0.7",
+  "version": "0.0.8",
   "name": "Self Service Hub",
   "id": "rr-self-service-hub",
   "description": "Hub for simplifying and abstracting automation from pipelines",

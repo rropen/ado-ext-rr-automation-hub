@@ -21,6 +21,7 @@ export interface ISettings {
     schemaFileName: string
     uiSchemaFileName: string
     id?: string | undefined
+    logLevel?: string|undefined
 }
 
 export interface IPanelExampleProps {
@@ -40,7 +41,8 @@ export const getSettingsDefaults = async () : Promise<ISettings> => {
         uiSchemaFileName:"azure-pipelines-variable-schema-ui.json",
         branchName: "main",
         tagName: undefined,
-        id: "settings"
+        id: "settings",
+        logLevel: "debug"
     }
     return defs
 }

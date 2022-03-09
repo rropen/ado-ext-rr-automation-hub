@@ -22,10 +22,10 @@ export const simpleSchema = `{
 export const simpleUiSchema = `{
     "users": {
         "user_one": {
-                "ui:widget": "identitiesWidget"
+                "ui:widget": "currentIdentitiesWidget"
                 },
         "user_two": {
-                "ui:widget": "identityWidget"
+                "ui:widget": "currentIdentityWidget"
                 }
         }
 }`

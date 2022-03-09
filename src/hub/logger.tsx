@@ -11,8 +11,13 @@ ROARR.write = (message) => {
   if (payload.context.logLevel >= LOGLEVEL) {
     console.log(payload);
   }
-
 };
+
+export const setLogLevel = (level:string):void =>
+{
+  LOGLEVEL = logLevels[level as keyof typeof logLevels]
+ 
+}
 
 export const Logger = Roarr.child({
     // .foo property is going to appear only in the logs that are created using
