@@ -4,11 +4,14 @@ export const simpleSchema = `{
     "properties": {
         "users": {
             "type": "object",
+            "required": ["user_one","user_two"],
             "properties": {
                 "user_one": {
-                    "type": "string"
+                    "type": "string",
+                    "title": "some user"
                 },
                 "user_two": {
+                    "title": "some user 2",
                     "type": "string"
                 }
             }
@@ -19,7 +22,7 @@ export const simpleSchema = `{
 export const simpleUiSchema = `{
     "users": {
         "user_one": {
-                "ui:widget": "currentIdentityWidget"
+                "ui:widget": "identitiesWidget"
                 },
         "user_two": {
                 "ui:widget": "identityWidget"

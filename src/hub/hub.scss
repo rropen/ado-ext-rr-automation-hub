@@ -8,9 +8,6 @@
 @import "node_modules/azure-devops-ui/Core/override.scss";
 
 @import "node_modules/highlight.js/scss/default.scss";
-
-// need to get this to work... fabric icons are not displaying... 
-// @import "node_modules/azure-devops-ui/Components/Icon/FabricIcons.scss";
  
 #root {
     height: 100%;  
@@ -26,8 +23,25 @@
 
 .form-group {
     margin-bottom: 0.1rem;
+    order:1;
     // max-width: 500px uncomment to shrink whole form
 }
+
+// error list is rendered in this, so set to above the submit button, but below form
+.mb-4.card.border-danger {
+    order: 2;
+}
+
+.flex-grow {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+// submit button at the bottom (there is no class in rsjf, but luckily it is the last div)
+.flex-grow div:last-child {
+    order: 3;
+  }
 
 .custom-select, .form-control{
     font-size: 0.8rem; 

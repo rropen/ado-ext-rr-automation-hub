@@ -27,7 +27,7 @@ import * as LoadFormData from "./load-form-data"
 import * as Flat from "./flatten"
 import {SettingsPanel, ISettings} from "./settings-panel"
 import {LogError, Logger} from "./logger"
-import {urlStringSchema} from "./demo-schema"
+import {urlStringSchema, simpleSchema, simpleUiSchema} from "./demo-schema"
 
 
 interface IHubStateProps {
@@ -80,20 +80,22 @@ class Hub extends React.Component<{}, IHubStateProps> {
     }  
     
     componentDidMount() {
-        /// testing
-        if(false){
-            let schema = JSON.parse(urlStringSchema)
-            let uiSchema = {}
-            LoadFormData.loadForm(schema, uiSchema).then(value => {
-                Logger.debug(`schema ${JSON.stringify(schema)}`)
-                Logger.debug(`UIschema ${JSON.stringify(uiSchema)}`)
-                this.setState({showPipelineForm:true, formData:value!, schema:schema, uiSchema:uiSchema, loading:false})
-                })
-        }
+        
         
         SDK.init(
             {loaded: false}
         ).then(async() => {
+
+            /// testing
+            if(true){
+                let schema = JSON.parse(simpleSchema) 
+                let uiSchema = JSON.parse(simpleUiSchema)
+                LoadFormData.loadForm(schema, uiSchema).then(value => {
+                    Logger.debug(`schema ${JSON.stringify(schema)}`)
+                    Logger.debug(`UIschema ${JSON.stringify(uiSchema)}`)
+                    this.setState({showPipelineForm:true, formData:value!, schema:schema, uiSchema:uiSchema, loading:false})
+                    })
+            }
 
             try {
                 var loadedSettings:ISettings = await ADOAPI.loadSettings()
@@ -101,18 +103,18 @@ class Hub extends React.Component<{}, IHubStateProps> {
             } catch (e) {
                 Logger.debug("could not load settings")
                 LogError(e)
+                ADOAPI.getCurrentProject().then((value)=>{
+                    this.setState(prevState  => ({
+                        settings: 
+                            { ...prevState.settings, projectName:value!.name}}
+                            )
+                        )
+                }
+                )  
             }
 
-            ADOAPI.getCurrentProject().then((value)=>{
-                this.setState(prevState  => ({
-                    settings: 
-                        { ...prevState.settings, projectName:value!.name}}
-                        )
-                    )
-                this.loadBuildDefinitions()
-            }
-            )    
-            
+            this.loadBuildDefinitions()
+           
             ADOAPI.getProjects().then((value)=>{
                 this.setState({projectNames : Array.from(value!, x => x.name!)});
             })
