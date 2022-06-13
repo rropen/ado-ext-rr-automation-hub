@@ -95,6 +95,7 @@ Minimal risks for this application. No sensitive RR data will be used, only pipe
 
 ## React
 
+```
 Hub
 |  | Dropdown |       |
 |  |  |   HelpPanel   |   
@@ -105,6 +106,7 @@ Hub
 | ErrorDialog         |
 | SettingsPanel       |
 
+```
 
 ## Non-React
 
