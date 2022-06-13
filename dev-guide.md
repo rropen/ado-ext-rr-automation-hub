@@ -116,7 +116,7 @@ Hub
 # Useful links
 
 - Icons: https://uifabricicons.azurewebsites.net/ 
-- https://marketplace.visualstudio.com/manage/publishers/marcrobinsontest
+- https://marketplace.visualstudio.com/manage/publishers
 - https://github.com/rjsf-team/react-jsonschema-form
 - https://github.com/APIDevTools/json-schema-ref-parser
 - https://github.com/byndit/azure-devops-extension-api
