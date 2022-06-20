@@ -31,8 +31,9 @@ export const getWidgetMetaMapping = (user: GraphUser | undefined, widgetname:str
         case "currentUserName":
             return user!.displayName
         case "currentUserEmail":
-            
             return user!.mailAddress
+        case "currentUserLoginEmail":
+            return user!.principalName
         default:
             throw Error(`Could not find mapping for widget ${widgetname}`)
     }
@@ -49,6 +50,7 @@ export const loadForm = async (schema:JSONSchema7, uiSchema:any=undefined) => {
 
     try{
         var currentUser = await ADOAPI.getCurrentUser()
+        Logger.debug(`current user: ${JSON.stringify(currentUser)}`)
         await updateIdentitiesIntoFormData(uiSchema,formData, currentUser!)
         var projects = await ADOAPI.getProjects()
         Logger.debug(`loaded projects: ${JSON.stringify(projects!)}`) 
@@ -74,7 +76,7 @@ const updateIdentitiesIntoFormData = (uiSchema:{}, formData:any, currentUser:Gra
 {
     // switch to lodash
     // loop through widgets to see which are customWidgets to set formData before loading
-    ["currentIdentityWidget","currentIdentitiesWidget","currentUserName", "currentUserEmail" ].forEach( element=> {
+    ["currentIdentityWidget","currentIdentitiesWidget","currentUserName", "currentUserEmail", "currentUserLoginEmail" ].forEach( element=> {
         const widgetKeys = recFind.findNestedObject(uiSchema!,"ui:widget",element)
         Logger.debug(`widgetKeys for ${element}: ${JSON.stringify(widgetKeys)}`)
         var widget:string = element

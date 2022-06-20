@@ -81,9 +81,9 @@ class Hub extends React.Component<{}, IHubStateProps> {
     
     componentDidMount() {
         
-        
+
         SDK.init(
-            {loaded: false}
+            {loaded: true}
         ).then(async() => {
 
             /// testing
@@ -125,7 +125,7 @@ class Hub extends React.Component<{}, IHubStateProps> {
             // var tp = await ADOAPI.getProjects();
             // this.setState({projectNames : Array.from(tp!, x => x.name!)});
             Logger.debug("SDK init finished")
-            SDK.notifyLoadSucceeded();
+            //SDK.notifyLoadSucceeded();
             
 
 
