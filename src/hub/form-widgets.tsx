@@ -167,6 +167,7 @@ export const widgets = {
   currentIdentitiesWidget: CurrentIdentitiesWidget,
   currentUserName: Widgets.TextWidget,
   currentUserEmail: Widgets.TextWidget,
+  currentUserLoginEmail: Widgets.TextWidget,
   currentProject: Widgets.SelectWidget,
   CheckboxWidget: LinkifiedCheckBox,
   TextWidget: LinkifiedTextWidget

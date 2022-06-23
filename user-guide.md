@@ -107,6 +107,7 @@ The `ui:widget` element can be set to:
 - `currentIdentitiesWidget`: A multiple Azure DevOps identity picker (users or groups) populated with the current user. A CSV of the Display Names of the identities are used to populate the form
 - `currentUserName`: A text entry populated with the current users display name
 - `currentUserEmail`: A text entry populated with the current users email
+- `currentUserLoginEmail`: A text entry populated with the current users login email (could be different to the mail address)
 - `currentProject`: A text entry populated with the current project
 
 
