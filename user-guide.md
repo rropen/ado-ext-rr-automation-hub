@@ -55,7 +55,7 @@ To refrence a Git repo, substitute the `<url>` for:
 This uses the API described [here]("https://docs.microsoft.com/en-us/rest/api/azure/devops/git/items/get?view=azure-devops-rest-6.0"). This includes options for specifying the version/branch/commit ids.
 
 
-######UI Schema File Name
+###### UI Schema File Name
 
 The auto-generatd UI can be customised using a separate JSON file. This setting defines this file and the default is `azure-pipelines-variable-schema-ui.json`
 
