@@ -2,7 +2,7 @@
   "name": "rr-automation-hub-test",
   "description": "Hub for simplifying and abstracting automation from pipelines",
   "author": "Marc Robinson",
-  "license": "Rolls-Royce PLC 2022",
+  "license": "MIT - Copyright Rolls-Royce PLC 2022",
   "scripts": {
     "clean": "rimraf ./dist ./out",
     "compile": "npm run clean && webpack --mode production",
