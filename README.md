@@ -1,4 +1,4 @@
-** This repo has been moved to https://github.com/rropen/ado-ext-rr-automation-hub. The Azure DevOps Repo is read-only** 
+**This repo has been moved to https://github.com/rropen/ado-ext-rr-automation-hub. The Azure DevOps Repo is read-only** 
 # Summary
 
 Extension adds a high level Hub page that:
