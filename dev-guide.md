@@ -71,9 +71,16 @@ Minimal risks for this application. No sensitive RR data will be used, only pipe
 - this will need the `dev` version of the extension to be published and installed in an ADO istance
 - can use localhost, but the ADO API calls will not work
 
-## to publish:
+## to publish (the dev version that points at localhost):
 
 `npm run publish:dev -- --token <token>`, token needs to have marketplace publish perms in ADO for all organisations 
+
+## to publish to the production RR Azure DevOps Marketplace
+
+- up rev the version in `vss-extension.json`
+- run `npm run package` and copy the `.vsix` file to the RR marketplace (https://marketplace.visualstudio.com/manage/publishers/rolls-royce)
+- OR
+- run `npm run publish -- --token <token>` using a token with perms for all organisations on the RR tenant. 
 
 ## TODO
 

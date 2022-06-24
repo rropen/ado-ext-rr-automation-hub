@@ -15,7 +15,22 @@ export const simpleSchema = `{
                     "type": "string"
                 }
             }
-        }
+        },
+        "repo_details":{
+          "type": "object",
+          "properties": {
+            "repo_in_current":
+            {
+              "type":"string",
+              "title": "current project repo name"
+            },
+            "all_repos":
+            {
+              "type":"string",
+              "title": "all repo name"
+            }
+          }
+      }
     }
 }`
 
@@ -27,7 +42,15 @@ export const simpleUiSchema = `{
         "user_two": {
                 "ui:widget": "currentIdentityWidget"
                 }
+        },
+     "repo_details":{
+        "repo_in_current":{
+            "ui:widget": "reposInCurrentProject"
+        },
+        "all_repos":{
+            "ui:widget": "repos"
         }
+     }  
 }`
 
 export const simpleUiSchemaSecret:string = `{

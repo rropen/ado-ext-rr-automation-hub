@@ -169,6 +169,8 @@ export const widgets = {
   currentUserEmail: Widgets.TextWidget,
   currentUserLoginEmail: Widgets.TextWidget,
   currentProject: Widgets.SelectWidget,
+  reposInCurrentProject: Widgets.SelectWidget,
+  repos: Widgets.SelectWidget,
   CheckboxWidget: LinkifiedCheckBox,
   TextWidget: LinkifiedTextWidget
 }; 
