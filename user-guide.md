@@ -108,8 +108,9 @@ The `ui:widget` element can be set to:
 - `currentUserName`: A text entry populated with the current users display name
 - `currentUserEmail`: A text entry populated with the current users email
 - `currentUserLoginEmail`: A text entry populated with the current users login email (could be different to the mail address)
-- `currentProject`: A text entry populated with the current project
-
+- `currentProject`: A dropdown select entry populated with the current project
+- `repos`: A dropdown select entry populated with all repos in the org
+- `reposInCurrentProject`: A dropdown select entry populated with repos in the current project
 
 ###### Secret Variables   
 

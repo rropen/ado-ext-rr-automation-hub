@@ -312,6 +312,41 @@ export const getCurrentUser = async(): Promise<GraphUser | undefined>=>
     }
 }
 
+
+/**
+ * Get all repos in current project. simple wrap of ADO API
+ * */
+ export const getReposInCurrentProject = async (): Promise<GitRepository[] | undefined> =>
+ {
+     try{
+         let currentProject = await getCurrentProject()
+         let repos = await getClient(GitRestClient).getRepositories(currentProject?.name)
+         Logger.debug(`repos: ${JSON.stringify(repos)}`)  
+         return repos     
+     } catch (e) {
+         LogError(e)
+         throw(e)
+ 
+     }
+ }
+
+ /**
+ * Get all repos in current project. simple wrap of ADO API
+ * */
+  export const getAllRepos = async (): Promise<GitRepository[] | undefined> =>
+  {
+      try{
+          let currentProject = await getCurrentProject()
+          let repos = await getClient(GitRestClient).getRepositories()
+          Logger.debug(`repos: ${JSON.stringify(repos)}`)  
+          return repos     
+      } catch (e) {
+          LogError(e)
+          throw(e)
+  
+      }
+  }
+
 /**
  * Get all projects. simple wrap of ADO API
  * */

@@ -4,6 +4,8 @@ import {
     GraphUser
 } from "@byndit/azure-devops-extension-api/Graph";
 
+import { GitRepository } from '@byndit/azure-devops-extension-api/Git';
+
 // import { TeamProjectReference } from "azure-devops-node-api/interfaces/CoreInterfaces";
 import { TeamProjectReference } from "@byndit/azure-devops-extension-api/Core/Core";
 // import { TeamProjectReference } from "azure-devops-node-api/interfaces/CoreInterfaces";
@@ -14,6 +16,7 @@ import {IProjectInfo } from "@byndit/azure-devops-extension-api/Common";
 import * as ADOAPI from "./ado-api";
 import * as recFind from"./recursive-find";
 import {LogError, Logger} from "./logger"
+
 
 /**
  * Mapping of widgets in the uiSchema to what is mapped to the underlying formData 
@@ -52,12 +55,23 @@ export const loadForm = async (schema:JSONSchema7, uiSchema:any=undefined) => {
         var currentUser = await ADOAPI.getCurrentUser()
         Logger.debug(`current user: ${JSON.stringify(currentUser)}`)
         await updateIdentitiesIntoFormData(uiSchema,formData, currentUser!)
+
         var projects = await ADOAPI.getProjects()
         Logger.debug(`loaded projects: ${JSON.stringify(projects!)}`) 
         await updateProjectsIntoSchema(projects!,uiSchema, schema)
+
+        var repos = await ADOAPI.getReposInCurrentProject()
+        Logger.debug(`current repos: ${JSON.stringify(repos!)}`) 
+        await updateReposInCurrentProjectIntoSchema(repos!,uiSchema, schema)
+
+        var repos = await ADOAPI.getAllRepos()
+        Logger.debug(`all repos: ${JSON.stringify(repos!)}`) 
+        await updateAllRepos(repos!,uiSchema, schema)
+
         var currentProject = await ADOAPI.getCurrentProject()
         Logger.debug(`loaded current project: ${JSON.stringify(currentProject!)}`) 
         await updateCurrentProjectIntoFormData(currentProject!,uiSchema, formData!)
+
         Logger.debug(`returning formData: ${JSON.stringify(formData)}`) 
         return formData
     } catch (e) {
@@ -98,6 +112,71 @@ const updateIdentitiesIntoFormData = (uiSchema:{}, formData:any, currentUser:Gra
         });
     })
 }
+
+/**
+ * find any repos widgets and set the corresponding enum in the schema
+ * @param repos list of repos 
+ * @param uiSchema current uiSchema
+ * @param schema current schema
+ */
+ const updateAllRepos = (repos:GitRepository[], uiSchema:{}, schema:JSONSchema7) =>
+ {
+     const widgetKeys = recFind.findNestedObject(uiSchema!,"ui:widget","repos")
+         Logger.debug(`widgetKeys for Repos: ${JSON.stringify(widgetKeys)}`)
+         Logger.debug(`repos: ${JSON.stringify(repos)}`)
+         var names = repos!.map((item)=>{ return item.name});
+         Logger.debug(`names: ${JSON.stringify(names)}`)
+ 
+         widgetKeys.forEach(element => {
+                 let ob:any = schema["properties"]
+                 element.forEach((subelement, idx, array) => {
+                     if (idx === array.length - 1){ 
+                         ob[subelement]["enum"] = names
+                     }
+                     else{
+                         if(!(subelement in ob))
+                         {
+                             ob[subelement] = {}
+                             ob[subelement]["properties"] = {}
+                         }
+                         ob = ob[subelement]["properties"]
+                     }
+                 });  
+         })
+ }
+
+/**
+ * find any reposInCurrentProject widgets and set the corresponding enum in the schema
+ * @param repos list of repos 
+ * @param uiSchema current uiSchema
+ * @param schema current schema
+ */
+ const updateReposInCurrentProjectIntoSchema = (repos:GitRepository[], uiSchema:{}, schema:JSONSchema7) =>
+ {
+     const widgetKeys = recFind.findNestedObject(uiSchema!,"ui:widget","reposInCurrentProject")
+         Logger.debug(`widgetKeys for Repos: ${JSON.stringify(widgetKeys)}`)
+         Logger.debug(`repos: ${JSON.stringify(repos)}`)
+         var names = repos!.map((item)=>{ return item.name});
+         Logger.debug(`names: ${JSON.stringify(names)}`)
+ 
+        //  var widget:string = "reposInCurrentProject"
+         widgetKeys.forEach(element => {
+                 let ob:any = schema["properties"]
+                 element.forEach((subelement, idx, array) => {
+                     if (idx === array.length - 1){ 
+                         ob[subelement]["enum"] = names
+                     }
+                     else{
+                         if(!(subelement in ob))
+                         {
+                             ob[subelement] = {}
+                             ob[subelement]["properties"] = {}
+                         }
+                         ob = ob[subelement]["properties"]
+                     }
+                 });  
+         })
+ }
 
 /**
  * find any currentProject widgets and set the corresponding enum in the schema
