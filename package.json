@@ -17,7 +17,7 @@
     "@byndit/azure-devops-extension-api": "^1.163.4",
     "@rjsf/bootstrap-4": "^3.2.1",
     "@rjsf/core": "^3.2.1",
-    "@types/lodash": "^4.14.178",
+    "@types/lodash": "^4.17.16",
     "azure-devops-extension-sdk": "^2.0.11",
     "azure-devops-ui": "^2.167.22",
     "bootstrap": "4.6",
